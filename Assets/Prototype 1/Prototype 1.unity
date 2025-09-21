@@ -130,7 +130,7 @@ GameObject:
   - component: {fileID: 466125093}
   - component: {fileID: 466125094}
   m_Layer: 0
-  m_Name: RecursiveGeneration
+  m_Name: Generation
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -160,15 +160,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 466125092}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 68c8c5ccc674830438e4f46d1337b1af, type: 3}
+  m_Script: {fileID: 11500000, guid: 49c434560aba7ff4ba11d35f55ee2481, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  wallPrefab: {fileID: 919132149155446097, guid: e6a1cdb745165e240acf4129b7b726d0, type: 3}
-  doorPrefab: {fileID: 919132149155446097, guid: 4b8c5fe6dfa01de40bbce85345da755d, type: 3}
-  size: {x: 1, y: 15}
-  scaleX: 1
-  scaleY: 3
-  scaleZ: 1
+  wallPrefab: {fileID: 919132149155446097, guid: 25cf937b7c6cadf4fa613c6d4454de5a, type: 3}
+  doorPrefab: {fileID: 919132149155446097, guid: 2f93e85298b0dfe4fbc01cb9acabe786, type: 3}
+  size: {x: 10, y: 10}
 --- !u!1 &1556515474
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,16 +1,16 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Room : MonoBehaviour
+public class Room
 {
     public Vector3 center;
     public float width;
     public float length;
 
-    public Room(Vector3 c, float w, float l)
+    public Room(Vector3 center, float width, float length)
     {
-        center = c;
-        width = w;
-        length = l;
+        this.center = center;
+        this.width = width;
+        this.length = length;
     }
 }
