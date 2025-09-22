@@ -3,7 +3,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-public class Dungeon : MonoBehaviour
+public class DungeonRooms : MonoBehaviour
 {
     [Header("Room")]
     [SerializeField] private GameObject wallPrefab;
@@ -78,17 +78,13 @@ public class Dungeon : MonoBehaviour
         float halfLength = room.length / 2f;
 
         //Bottom
-        GenerateWallLine(new Vector3(room.center.x - halfWidth, 0, room.center.z - halfLength),
-                         Vector3.right, 0, room.width, maxStretch, wallSize);
+        GenerateWallLine(new Vector3(room.center.x - halfWidth, 0, room.center.z - halfLength), Vector3.right, 0, room.width, maxStretch, wallSize);
         //Top
-        GenerateWallLine(new Vector3(room.center.x - halfWidth, 0, room.center.z + halfLength),
-                         Vector3.right, 0, room.width, maxStretch, wallSize);
+        GenerateWallLine(new Vector3(room.center.x - halfWidth, 0, room.center.z + halfLength), Vector3.right, 0, room.width, maxStretch, wallSize);
         //Left
-        GenerateWallLine(new Vector3(room.center.x - halfWidth, 0, room.center.z - halfLength),
-                         Vector3.forward, 90, room.length, maxStretch, wallSize);
+        GenerateWallLine(new Vector3(room.center.x - halfWidth, 0, room.center.z - halfLength), Vector3.forward, 90, room.length, maxStretch, wallSize);
         //Right
-        GenerateWallLine(new Vector3(room.center.x + halfWidth, 0, room.center.z - halfLength),
-                         Vector3.forward, 90, room.length, maxStretch, wallSize);
+        GenerateWallLine(new Vector3(room.center.x + halfWidth, 0, room.center.z - halfLength), Vector3.forward, 90, room.length, maxStretch, wallSize);
     }
 
     private void GenerateWallLine(Vector3 startPos, Vector3 dir, int angle, float totalLength, float maxStretch, float wallSize)
@@ -129,16 +125,25 @@ public class Dungeon : MonoBehaviour
         if (room.width >= tableSizeSpawn && room.length >= tableSizeSpawn && longTablePrefab != null && chairPrefab != null)
         {
             GameObject table = Instantiate(longTablePrefab, transform);
-            table.transform.position = room.center;
+            float offset = Random.Range(5, 10);
+            float halfWidth = room.width / 2f;
+            float halfLength = room.length / 2f;
+
+            float randomX = Random.Range(room.center.x - halfWidth + offset, room.center.x + halfWidth - offset);
+            float randomZ = Random.Range(room.center.z - halfLength + offset, room.center.z + halfLength - offset);
+
+            Vector3 randomPosition = new Vector3(randomX, 0, randomZ);
+
+            table.transform.position = randomPosition;
 
             float chairOffsetX = 1.5f;
             float chairOffsetZ = 1f;
             Vector3[] chairPositions =
             {
-                room.center + new Vector3(chairOffsetX, 0, -chairOffsetZ),
-                room.center + new Vector3(chairOffsetX, 0, chairOffsetZ),
-                room.center + new Vector3(-chairOffsetX, 0, -chairOffsetZ),
-                room.center + new Vector3(-chairOffsetX, 0, chairOffsetZ),
+                table.transform.position + new Vector3(chairOffsetX, 0, -chairOffsetZ),
+                table.transform.position + new Vector3(chairOffsetX, 0, chairOffsetZ),
+                table.transform.position + new Vector3(-chairOffsetX, 0, -chairOffsetZ),
+                table.transform.position + new Vector3(-chairOffsetX, 0, chairOffsetZ),
             };
 
             Quaternion[] chairOrientations =
@@ -164,7 +169,7 @@ public class Dungeon : MonoBehaviour
         {
             float halfWidth = room.width / 2f;
             float halfLength = room.length / 2f;
-            float offset = 0.75f;
+            float offset = 1f;
             int chestSpawnAmount = Random.Range(0, maxChestSpawnAmount + 1);
 
             for (int i = 0; i < chestSpawnAmount; i++)
@@ -173,23 +178,25 @@ public class Dungeon : MonoBehaviour
                 Vector3 chestPosition = Vector3.zero;
                 Quaternion chestRotation = Quaternion.identity;
 
+                float randomX = Random.Range(room.center.x - halfWidth + offset, room.center.x + halfWidth - offset);
+                float randomZ = Random.Range(room.center.z - halfLength + offset, room.center.z + halfLength - offset);
+
                 switch (wall)
                 {
                     case 0: // Top wall
-                        chestPosition = new Vector3(
-                            Random.Range(room.center.x - halfWidth + offset, room.center.x + halfWidth - offset), 0, room.center.z + halfLength - offset);
+                        chestPosition = new Vector3(randomX, 0, room.center.z + halfLength - offset);
                         chestRotation = Quaternion.Euler(0, 180, 0);
                         break;
                     case 1: // Bottom wall
-                        chestPosition = new Vector3(Random.Range(room.center.x - halfWidth + offset, room.center.x + halfWidth - offset), 0, room.center.z - halfLength + offset);
+                        chestPosition = new Vector3(randomX, 0, room.center.z - halfLength + offset);
                         chestRotation = Quaternion.Euler(0, 0, 0);
                         break;
                     case 2: // Right wall
-                        chestPosition = new Vector3(room.center.x + halfWidth - offset, 0, Random.Range(room.center.z - halfLength + offset, room.center.z + halfLength - offset));
+                        chestPosition = new Vector3(room.center.x + halfWidth - offset, 0, randomZ);
                         chestRotation = Quaternion.Euler(0, -90, 0);
                         break;
                     case 3: // Left wall
-                        chestPosition = new Vector3(room.center.x - halfWidth + offset, 0, Random.Range(room.center.z - halfLength + offset, room.center.z + halfLength - offset));
+                        chestPosition = new Vector3(room.center.x - halfWidth + offset, 0, randomZ);
                         chestRotation = Quaternion.Euler(0, 90, 0);
                         break;
                 }

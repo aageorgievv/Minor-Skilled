@@ -168,8 +168,12 @@ MonoBehaviour:
   floorPrefab: {fileID: 3068211032169242613, guid: 1c59ea643dcbd0e4e8288239c3eefb6e, type: 3}
   longTablePrefab: {fileID: 919132149155446097, guid: 479315673d0f0f84f814204b3d97ca2a, type: 3}
   chairPrefab: {fileID: 919132149155446097, guid: 32c3435b9a490f044bfe181f4e885d49, type: 3}
-  bookShelfPrefab: {fileID: 0}
+  emptyChestPrefab: {fileID: 919132149155446097, guid: 2ee301f194b29b044b48ef7b0f4425ca, type: 3}
+  treasureChestPrefab: {fileID: 919132149155446097, guid: c29fcc66f6663824592d2ab1dec3a0fa, type: 3}
   size: {x: 10, y: 10}
+  tableSizeSpawn: 10
+  chestSizeSpawn: 3
+  maxChestSpawnAmount: 3
 --- !u!1 &1556515474
 GameObject:
   m_ObjectHideFlags: 0
