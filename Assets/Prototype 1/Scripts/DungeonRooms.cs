@@ -10,17 +10,21 @@ public class DungeonRooms : MonoBehaviour
     [SerializeField] private GameObject doorPrefab;
     [SerializeField] private GameObject floorPrefab;
 
-    [Header("Interior")]
-    [SerializeField] private GameObject longTablePrefab;
+    [Header("Interior/Furniture")]
+    [SerializeField] private GameObject[] longTablePrefabs;
     [SerializeField] private GameObject chairPrefab;
+
+    [Header("Treasure/Loot")]
     [SerializeField] private GameObject emptyChestPrefab;
     [SerializeField] private GameObject treasureChestPrefab;
 
-    [Header("Settings")]
+    [Header("Generation settings")]
     [SerializeField, Min(1f)] public Vector2 size;
     [SerializeField] private int tableSizeSpawn = 6;
     [SerializeField] private int chestSizeSpawn = 3;
-    [SerializeField] private int maxChestSpawnAmount = 3;
+
+    [Header("Settings")]
+    [SerializeField,Range(1, 5)] private int maxChestSpawnAmount = 3;
 
 
     protected List<Room> rooms = new List<Room>();
@@ -115,16 +119,16 @@ public class DungeonRooms : MonoBehaviour
 
     private void GenerateInterior(Room room)
     {
-        GenerateTable(room);
+        GenerateTableAndChairs(room);
         GenerateChest(room);
     }
 
-    private void GenerateTable(Room room)
+    private void GenerateTableAndChairs(Room room)
     {
-        //Table and chairs
-        if (room.width >= tableSizeSpawn && room.length >= tableSizeSpawn && longTablePrefab != null && chairPrefab != null)
+        if (room.width >= tableSizeSpawn && room.length >= tableSizeSpawn && longTablePrefabs.Length > 0 && chairPrefab != null)
         {
-            GameObject table = Instantiate(longTablePrefab, transform);
+            GameObject tablePrefab = longTablePrefabs[Random.Range(0, longTablePrefabs.Length)];
+            GameObject table = Instantiate(tablePrefab, transform);
             float offset = Random.Range(5, 10);
             float halfWidth = room.width / 2f;
             float halfLength = room.length / 2f;
@@ -164,7 +168,6 @@ public class DungeonRooms : MonoBehaviour
 
     private void GenerateChest(Room room)
     {
-        //Chest
         if (room.width >= chestSizeSpawn && room.length != chestSizeSpawn && emptyChestPrefab != null && treasureChestPrefab != null)
         {
             float halfWidth = room.width / 2f;
