@@ -6,12 +6,13 @@ using UnityEngine.UIElements;
 public class DungeonRooms : MonoBehaviour
 {
     [Header("Room")]
-    [SerializeField] private GameObject wallPrefab;
+    [SerializeField] private GameObject[] wallPrefabs;
     [SerializeField] private GameObject doorPrefab;
     [SerializeField] private GameObject floorPrefab;
 
     [Header("Interior/Furniture")]
     [SerializeField] private GameObject[] longTablePrefabs;
+    [SerializeField] private GameObject[] bedPrefabs;
     [SerializeField] private GameObject chairPrefab;
 
     [Header("Treasure/Loot")]
@@ -22,6 +23,8 @@ public class DungeonRooms : MonoBehaviour
     [SerializeField, Min(1f)] public Vector2 size;
     [SerializeField] private int tableSizeSpawn = 6;
     [SerializeField] private int chestSizeSpawn = 3;
+    [SerializeField] private int bedSizeSpawn = 2;
+
 
     [Header("Settings")]
     [SerializeField,Range(1, 5)] private int maxChestSpawnAmount = 3;
@@ -101,6 +104,7 @@ public class DungeonRooms : MonoBehaviour
             float cover = Mathf.Min(remaining, maxCover);
             float scale = cover / wallSize;
 
+            GameObject wallPrefab = wallPrefabs[Random.Range(0, wallPrefabs.Length)];
             GameObject wall = Instantiate(wallPrefab, transform);
             wall.transform.position = startPos + dir * (placed + cover / 2);
             wall.transform.rotation = Quaternion.Euler(0f, angle, 0f);
@@ -121,6 +125,7 @@ public class DungeonRooms : MonoBehaviour
     {
         GenerateTableAndChairs(room);
         GenerateChest(room);
+        GenerateBeds(room);
     }
 
     private void GenerateTableAndChairs(Room room)
@@ -207,6 +212,47 @@ public class DungeonRooms : MonoBehaviour
                 GameObject chestPrefab = Random.value < 0.5f ? emptyChestPrefab : treasureChestPrefab;
                 Instantiate(chestPrefab, chestPosition, chestRotation, transform);
             }
+        }
+    }
+
+    private void GenerateBeds(Room room)
+    {
+        if (room.width >= bedSizeSpawn && room.length != bedSizeSpawn && bedPrefabs.Length > 0)
+        {
+            GameObject bedPrefab = bedPrefabs[Random.Range(0, bedPrefabs.Length)];
+
+            float halfWidth = room.width / 2f;
+            float halfLength = room.length / 2f;
+            float offset = 1.5f;
+
+            int corner = Random.Range(0, 4);
+            Vector3 bedPosition = Vector3.zero;
+            Quaternion bedRotation = Quaternion.identity;
+
+            switch (corner)
+            {
+                case 0: // bottom-left
+                    bedPosition = new Vector3(room.center.x - halfWidth + offset, 0, room.center.z - halfLength + offset);
+                    bedRotation = Quaternion.Euler(0, 90, 0);
+                    break;
+
+                case 1: // bottom-right
+                    bedPosition = new Vector3(room.center.x + halfWidth - offset, 0, room.center.z - halfLength + offset);
+                    bedRotation = Quaternion.Euler(0, 0, 0);
+                    break;
+
+                case 2: // top-left
+                    bedPosition = new Vector3(room.center.x - halfWidth + offset, 0, room.center.z + halfLength - offset);
+                    bedRotation = Quaternion.Euler(0, 180, 0);
+                    break;
+
+                case 3: // top-right
+                    bedPosition = new Vector3(room.center.x + halfWidth - offset, 0, room.center.z + halfLength - offset);
+                    bedRotation = Quaternion.Euler(0, -90, 0);
+                    break;
+            }
+
+            Instantiate(bedPrefab, bedPosition, bedRotation, transform);
         }
     }
 }

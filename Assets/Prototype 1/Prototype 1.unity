@@ -163,20 +163,31 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 49c434560aba7ff4ba11d35f55ee2481, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  wallPrefab: {fileID: 919132149155446097, guid: 25cf937b7c6cadf4fa613c6d4454de5a, type: 3}
+  wallPrefabs:
+  - {fileID: 919132149155446097, guid: 25cf937b7c6cadf4fa613c6d4454de5a, type: 3}
+  - {fileID: 919132149155446097, guid: 43a3e68adda43be428e9c13d313eecc7, type: 3}
+  - {fileID: 919132149155446097, guid: 85a46157dbc159543a29f0f219e4c453, type: 3}
+  - {fileID: 919132149155446097, guid: d342571d08926a84d99ae05004ff39cc, type: 3}
+  - {fileID: 919132149155446097, guid: 77652e85be75e51499296ab6d52142a3, type: 3}
+  - {fileID: 919132149155446097, guid: e6a1cdb745165e240acf4129b7b726d0, type: 3}
   doorPrefab: {fileID: 919132149155446097, guid: 2f93e85298b0dfe4fbc01cb9acabe786, type: 3}
   floorPrefab: {fileID: 3068211032169242613, guid: 1c59ea643dcbd0e4e8288239c3eefb6e, type: 3}
-  longTablePrefab: {fileID: 919132149155446097, guid: 88aea5c4474531347baf9e58a0dc2201, type: 3}
-  longClothTablePrefab: {fileID: 919132149155446097, guid: 479315673d0f0f84f814204b3d97ca2a, type: 3}
-  brokenTablePrefab: {fileID: 919132149155446097, guid: 5242be18639f5c04eb514fc07970f0db, type: 3}
-  foodTablePrefab: {fileID: 919132149155446097, guid: aed0638b2798b6b4fba0087960bc52ed, type: 3}
-  boozeTablePrefab: {fileID: 919132149155446097, guid: ae9d1f0dfab88ff42905dfd0d2051ff9, type: 3}
+  longTablePrefabs:
+  - {fileID: 919132149155446097, guid: 88aea5c4474531347baf9e58a0dc2201, type: 3}
+  - {fileID: 919132149155446097, guid: 5242be18639f5c04eb514fc07970f0db, type: 3}
+  - {fileID: 919132149155446097, guid: aed0638b2798b6b4fba0087960bc52ed, type: 3}
+  - {fileID: 919132149155446097, guid: ae9d1f0dfab88ff42905dfd0d2051ff9, type: 3}
+  - {fileID: 919132149155446097, guid: 479315673d0f0f84f814204b3d97ca2a, type: 3}
+  bedPrefabs:
+  - {fileID: 919132149155446097, guid: 77a17f0489b352f4385ae7f2a4090ad1, type: 3}
+  - {fileID: 919132149155446097, guid: 0e5de8f8ea72fa446a28a3df65732a5b, type: 3}
   chairPrefab: {fileID: 919132149155446097, guid: 32c3435b9a490f044bfe181f4e885d49, type: 3}
   emptyChestPrefab: {fileID: 919132149155446097, guid: 2ee301f194b29b044b48ef7b0f4425ca, type: 3}
   treasureChestPrefab: {fileID: 919132149155446097, guid: c29fcc66f6663824592d2ab1dec3a0fa, type: 3}
   size: {x: 10, y: 10}
   tableSizeSpawn: 10
   chestSizeSpawn: 3
+  bedSizeSpawn: 2
   maxChestSpawnAmount: 3
 --- !u!1 &1556515474
 GameObject:
