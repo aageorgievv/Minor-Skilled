@@ -165,6 +165,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   wallPrefab: {fileID: 919132149155446097, guid: 25cf937b7c6cadf4fa613c6d4454de5a, type: 3}
   doorPrefab: {fileID: 919132149155446097, guid: 2f93e85298b0dfe4fbc01cb9acabe786, type: 3}
+  floorPrefab: {fileID: 3068211032169242613, guid: 1c59ea643dcbd0e4e8288239c3eefb6e, type: 3}
+  longTablePrefab: {fileID: 919132149155446097, guid: 479315673d0f0f84f814204b3d97ca2a, type: 3}
+  chairPrefab: {fileID: 919132149155446097, guid: 32c3435b9a490f044bfe181f4e885d49, type: 3}
+  bookShelfPrefab: {fileID: 0}
   size: {x: 10, y: 10}
 --- !u!1 &1556515474
 GameObject:
