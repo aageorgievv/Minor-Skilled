@@ -3,7 +3,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-public class DungeonRooms : MonoBehaviour
+public class DungeonRoom : MonoBehaviour
 {
     [Header("Room")]
     [SerializeField] private GameObject[] wallPrefabs;
@@ -27,7 +27,7 @@ public class DungeonRooms : MonoBehaviour
 
 
     [Header("Settings")]
-    [SerializeField,Range(1, 5)] private int maxChestSpawnAmount = 3;
+    [SerializeField, Range(1, 5)] private int maxChestSpawnAmount = 3;
 
 
     protected List<Room> rooms = new List<Room>();
@@ -35,10 +35,17 @@ public class DungeonRooms : MonoBehaviour
 
     private Vector2 lastSize;
 
+    private bool[,,] grid;
+    private int gridWidth;
+    private int gridHeight;
+    private int gridLenght;
+
     private void Update()
     {
         if (size != lastSize)
         {
+            InitializeGrid(new Vector3(size.x, 5, size.y));
+
             lastSize = size;
 
             foreach (Transform child in transform)
@@ -123,8 +130,8 @@ public class DungeonRooms : MonoBehaviour
 
     private void GenerateInterior(Room room)
     {
-        GenerateTableAndChairs(room);
-        GenerateChest(room);
+        //GenerateTableAndChairs(room);
+       // GenerateChest(room);
         GenerateBeds(room);
     }
 
@@ -223,7 +230,8 @@ public class DungeonRooms : MonoBehaviour
 
             float halfWidth = room.width / 2f;
             float halfLength = room.length / 2f;
-            float offset = 1.5f;
+            float offset1 = 1.5f;
+            float offset2 = 2f;
 
             int corner = Random.Range(0, 4);
             Vector3 bedPosition = Vector3.zero;
@@ -232,27 +240,37 @@ public class DungeonRooms : MonoBehaviour
             switch (corner)
             {
                 case 0: // bottom-left
-                    bedPosition = new Vector3(room.center.x - halfWidth + offset, 0, room.center.z - halfLength + offset);
+                    bedPosition = new Vector3(room.center.x - halfWidth + offset2, 0, room.center.z - halfLength + offset1);
                     bedRotation = Quaternion.Euler(0, 90, 0);
                     break;
 
                 case 1: // bottom-right
-                    bedPosition = new Vector3(room.center.x + halfWidth - offset, 0, room.center.z - halfLength + offset);
+                    bedPosition = new Vector3(room.center.x + halfWidth - offset1, 0, room.center.z - halfLength + offset2);
                     bedRotation = Quaternion.Euler(0, 0, 0);
                     break;
 
                 case 2: // top-left
-                    bedPosition = new Vector3(room.center.x - halfWidth + offset, 0, room.center.z + halfLength - offset);
+                    bedPosition = new Vector3(room.center.x - halfWidth + offset1, 0, room.center.z + halfLength - offset2);
                     bedRotation = Quaternion.Euler(0, 180, 0);
                     break;
 
                 case 3: // top-right
-                    bedPosition = new Vector3(room.center.x + halfWidth - offset, 0, room.center.z + halfLength - offset);
+                    bedPosition = new Vector3(room.center.x + halfWidth - offset2, 0, room.center.z + halfLength - offset1);
                     bedRotation = Quaternion.Euler(0, -90, 0);
                     break;
             }
 
             Instantiate(bedPrefab, bedPosition, bedRotation, transform);
         }
+    }
+
+    //Move potentially to a GridManager
+    private void InitializeGrid(Vector3 roomSize, float cellSize = 1f)
+    {
+        gridWidth = Mathf.CeilToInt(roomSize.x);
+        gridHeight = Mathf.CeilToInt(5f / cellSize); //Play with the ceiling size as this might not be correct
+        gridLenght = Mathf.CeilToInt(roomSize.z);
+
+        grid = new bool[gridWidth, gridHeight, gridLenght];
     }
 }
