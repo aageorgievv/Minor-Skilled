@@ -40,6 +40,13 @@ public class DungeonRoom : MonoBehaviour
     private int gridHeight;
     private int gridLenght;
 
+    private LayerMask furnitureLayer;
+
+    private void Start()
+    {
+        furnitureLayer = LayerMask.GetMask("Furniture");
+    }
+
     private void Update()
     {
         if (size != lastSize)
@@ -130,8 +137,8 @@ public class DungeonRoom : MonoBehaviour
 
     private void GenerateInterior(Room room)
     {
-        //GenerateTableAndChairs(room);
-       // GenerateChest(room);
+        GenerateTableAndChairs(room);
+        GenerateChest(room);
         GenerateBeds(room);
     }
 
@@ -140,7 +147,8 @@ public class DungeonRoom : MonoBehaviour
         if (room.width >= tableSizeSpawn && room.length >= tableSizeSpawn && longTablePrefabs.Length > 0 && chairPrefab != null)
         {
             GameObject tablePrefab = longTablePrefabs[Random.Range(0, longTablePrefabs.Length)];
-            GameObject table = Instantiate(tablePrefab, transform);
+            Vector3 tableSize = tablePrefab.GetComponent<BoxCollider>().size;
+
             float offset = Random.Range(5, 10);
             float halfWidth = room.width / 2f;
             float halfLength = room.length / 2f;
@@ -150,16 +158,14 @@ public class DungeonRoom : MonoBehaviour
 
             Vector3 randomPosition = new Vector3(randomX, 0, randomZ);
 
-            table.transform.position = randomPosition;
-
             float chairOffsetX = 1.5f;
             float chairOffsetZ = 1f;
             Vector3[] chairPositions =
             {
-                table.transform.position + new Vector3(chairOffsetX, 0, -chairOffsetZ),
-                table.transform.position + new Vector3(chairOffsetX, 0, chairOffsetZ),
-                table.transform.position + new Vector3(-chairOffsetX, 0, -chairOffsetZ),
-                table.transform.position + new Vector3(-chairOffsetX, 0, chairOffsetZ),
+                randomPosition + new Vector3(chairOffsetX, 0, -chairOffsetZ),
+                randomPosition + new Vector3(chairOffsetX, 0, chairOffsetZ),
+                randomPosition + new Vector3(-chairOffsetX, 0, -chairOffsetZ),
+                randomPosition + new Vector3(-chairOffsetX, 0, chairOffsetZ),
             };
 
             Quaternion[] chairOrientations =
@@ -171,9 +177,18 @@ public class DungeonRoom : MonoBehaviour
 
             };
 
-            for (int i = 0; i < chairPositions.Length; i++)
+            if (IsSpaceFree(randomPosition, tableSize, Quaternion.identity, furnitureLayer))
             {
-                Instantiate(chairPrefab, chairPositions[i], chairOrientations[i], transform);
+                Instantiate(tablePrefab, randomPosition, Quaternion.identity, transform);
+
+                for (int i = 0; i < chairPositions.Length; i++)
+                {
+                    Instantiate(chairPrefab, chairPositions[i], chairOrientations[i], transform);
+                }
+            }
+            else
+            {
+                Debug.LogError($"Cant place {nameof(tablePrefab)} at {randomPosition}");
             }
         }
     }
@@ -182,6 +197,9 @@ public class DungeonRoom : MonoBehaviour
     {
         if (room.width >= chestSizeSpawn && room.length != chestSizeSpawn && emptyChestPrefab != null && treasureChestPrefab != null)
         {
+            GameObject chestPrefab = Random.value < 0.5f ? emptyChestPrefab : treasureChestPrefab;
+            Vector3 chestSize = chestPrefab.GetComponent<BoxCollider>().size;
+
             float halfWidth = room.width / 2f;
             float halfLength = room.length / 2f;
             float offset = 1f;
@@ -216,8 +234,14 @@ public class DungeonRoom : MonoBehaviour
                         break;
                 }
 
-                GameObject chestPrefab = Random.value < 0.5f ? emptyChestPrefab : treasureChestPrefab;
-                Instantiate(chestPrefab, chestPosition, chestRotation, transform);
+                if (IsSpaceFree(chestPosition, chestSize, chestRotation, furnitureLayer))
+                {
+                    Instantiate(chestPrefab, chestPosition, chestRotation, transform);
+                }
+                else
+                {
+                    Debug.LogError($"Cant place {nameof(chairPrefab)} at {chestPosition}");
+                }
             }
         }
     }
@@ -227,6 +251,7 @@ public class DungeonRoom : MonoBehaviour
         if (room.width >= bedSizeSpawn && room.length != bedSizeSpawn && bedPrefabs.Length > 0)
         {
             GameObject bedPrefab = bedPrefabs[Random.Range(0, bedPrefabs.Length)];
+            Vector3 bedsize = bedPrefab.GetComponent<BoxCollider>().size;
 
             float halfWidth = room.width / 2f;
             float halfLength = room.length / 2f;
@@ -260,7 +285,14 @@ public class DungeonRoom : MonoBehaviour
                     break;
             }
 
-            Instantiate(bedPrefab, bedPosition, bedRotation, transform);
+            if (IsSpaceFree(bedPosition, bedsize, bedRotation, furnitureLayer))
+            {
+                Instantiate(bedPrefab, bedPosition, bedRotation, transform);
+            }
+            else
+            {
+                Debug.LogError($"Cant place {nameof(bedPrefab)} at {bedPosition}");
+            }
         }
     }
 
@@ -272,5 +304,12 @@ public class DungeonRoom : MonoBehaviour
         gridLenght = Mathf.CeilToInt(roomSize.z);
 
         grid = new bool[gridWidth, gridHeight, gridLenght];
+    }
+
+    private bool IsSpaceFree(Vector3 position, Vector3 size, Quaternion rotation, LayerMask layerMask)
+    {
+        Collider[] hits = Physics.OverlapBox(position, size, rotation, layerMask);
+
+        return hits.Length == 0;
     }
 }

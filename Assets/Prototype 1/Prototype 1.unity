@@ -119,67 +119,6 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1001 &199429430
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: -3603423271020705999, guid: 1c217bc5c86793743b8d470702a8d27d, type: 3}
-      propertyPath: size.x
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 3510615712679776044, guid: 1c217bc5c86793743b8d470702a8d27d, type: 3}
-      propertyPath: m_Name
-      value: bed_decorated
-      objectReference: {fileID: 0}
-    - target: {fileID: 4320050216857146774, guid: 1c217bc5c86793743b8d470702a8d27d, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4320050216857146774, guid: 1c217bc5c86793743b8d470702a8d27d, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4320050216857146774, guid: 1c217bc5c86793743b8d470702a8d27d, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4320050216857146774, guid: 1c217bc5c86793743b8d470702a8d27d, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4320050216857146774, guid: 1c217bc5c86793743b8d470702a8d27d, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4320050216857146774, guid: 1c217bc5c86793743b8d470702a8d27d, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4320050216857146774, guid: 1c217bc5c86793743b8d470702a8d27d, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4320050216857146774, guid: 1c217bc5c86793743b8d470702a8d27d, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4320050216857146774, guid: 1c217bc5c86793743b8d470702a8d27d, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4320050216857146774, guid: 1c217bc5c86793743b8d470702a8d27d, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 1c217bc5c86793743b8d470702a8d27d, type: 3}
 --- !u!1 &466125092
 GameObject:
   m_ObjectHideFlags: 0
@@ -234,17 +173,17 @@ MonoBehaviour:
   doorPrefab: {fileID: 919132149155446097, guid: 2f93e85298b0dfe4fbc01cb9acabe786, type: 3}
   floorPrefab: {fileID: 3068211032169242613, guid: 1c59ea643dcbd0e4e8288239c3eefb6e, type: 3}
   longTablePrefabs:
-  - {fileID: 919132149155446097, guid: 88aea5c4474531347baf9e58a0dc2201, type: 3}
-  - {fileID: 919132149155446097, guid: 5242be18639f5c04eb514fc07970f0db, type: 3}
-  - {fileID: 919132149155446097, guid: aed0638b2798b6b4fba0087960bc52ed, type: 3}
-  - {fileID: 919132149155446097, guid: ae9d1f0dfab88ff42905dfd0d2051ff9, type: 3}
-  - {fileID: 919132149155446097, guid: 479315673d0f0f84f814204b3d97ca2a, type: 3}
+  - {fileID: 677044114946480800, guid: 41eba915bb6c9c0468eb9c652931207b, type: 3}
+  - {fileID: 5094555022962229818, guid: 7b022caf150dc4a4ba3b33c7749655c7, type: 3}
+  - {fileID: 633646106028526738, guid: 875f29c5f421e0241883eda0d7d4dbed, type: 3}
+  - {fileID: 144181475215857399, guid: 35e87ed346d5a774eaaa0865646b0f51, type: 3}
+  - {fileID: 4803803265964052303, guid: ccb799e72bbe23a4c83b342751b1f24d, type: 3}
   bedPrefabs:
   - {fileID: 3510615712679776044, guid: 1c217bc5c86793743b8d470702a8d27d, type: 3}
   - {fileID: 1815131009555423275, guid: 7a906979ebc424c46abe5aca418ef473, type: 3}
-  chairPrefab: {fileID: 919132149155446097, guid: 32c3435b9a490f044bfe181f4e885d49, type: 3}
-  emptyChestPrefab: {fileID: 919132149155446097, guid: 2ee301f194b29b044b48ef7b0f4425ca, type: 3}
-  treasureChestPrefab: {fileID: 919132149155446097, guid: c29fcc66f6663824592d2ab1dec3a0fa, type: 3}
+  chairPrefab: {fileID: 2382700466248928502, guid: 47590335a5c652841ad2024ddec867ae, type: 3}
+  emptyChestPrefab: {fileID: 6615146264328433009, guid: e2c4d452f7b455b4f963dd045658af7b, type: 3}
+  treasureChestPrefab: {fileID: 1065950770545869691, guid: 9ebc683bc87b0504a981cfe17048c74a, type: 3}
   size: {x: 10, y: 10}
   tableSizeSpawn: 10
   chestSizeSpawn: 3
@@ -625,4 +564,3 @@ SceneRoots:
   - {fileID: 2125931959}
   - {fileID: 1556515478}
   - {fileID: 466125093}
-  - {fileID: 199429430}
