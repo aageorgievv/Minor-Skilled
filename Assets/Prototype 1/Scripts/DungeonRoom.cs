@@ -42,6 +42,8 @@ public class DungeonRoom : MonoBehaviour
 
     private LayerMask furnitureLayer;
 
+    private const int maxBedIterations = 500;
+
     private void Start()
     {
         furnitureLayer = LayerMask.GetMask("Furniture");
@@ -137,13 +139,19 @@ public class DungeonRoom : MonoBehaviour
 
     private void GenerateInterior(Room room)
     {
-        GenerateTableAndChairs(room);
+        GenerateTableAndChairs(room, 0);
+        GenerateBeds(room, 0);
         GenerateChest(room);
-        GenerateBeds(room);
     }
 
-    private void GenerateTableAndChairs(Room room)
+    private void GenerateTableAndChairs(Room room, int iteration)
     {
+        if (iteration > maxBedIterations)
+        {
+            Debug.LogError("Fail safe while generating table/chairs");
+            return;
+        }
+
         if (room.width >= tableSizeSpawn && room.length >= tableSizeSpawn && longTablePrefabs.Length > 0 && chairPrefab != null)
         {
             GameObject tablePrefab = longTablePrefabs[Random.Range(0, longTablePrefabs.Length)];
@@ -188,6 +196,7 @@ public class DungeonRoom : MonoBehaviour
             }
             else
             {
+                GenerateTableAndChairs(room, ++iteration);
                 Debug.LogError($"Cant place {nameof(tablePrefab)} at {randomPosition}");
             }
         }
@@ -246,8 +255,14 @@ public class DungeonRoom : MonoBehaviour
         }
     }
 
-    private void GenerateBeds(Room room)
+    private void GenerateBeds(Room room, int iteration)
     {
+        if (iteration > maxBedIterations)
+        {
+
+            return;
+        }
+
         if (room.width >= bedSizeSpawn && room.length != bedSizeSpawn && bedPrefabs.Length > 0)
         {
             GameObject bedPrefab = bedPrefabs[Random.Range(0, bedPrefabs.Length)];
@@ -291,6 +306,7 @@ public class DungeonRoom : MonoBehaviour
             }
             else
             {
+                GenerateBeds(room, ++iteration);
                 Debug.LogError($"Cant place {nameof(bedPrefab)} at {bedPosition}");
             }
         }
