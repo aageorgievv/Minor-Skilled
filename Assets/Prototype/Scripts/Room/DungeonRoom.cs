@@ -49,7 +49,7 @@ public class DungeonRoom : MonoBehaviour
         furnitureLayer = LayerMask.GetMask("Furniture");
     }
 
-    private void Update()
+/*    private void Update()
     {
         if (size != lastSize)
         {
@@ -64,9 +64,9 @@ public class DungeonRoom : MonoBehaviour
 
             StartGenerating();
         }
-    }
+    }*/
 
-    private void StartGenerating()
+    public void StartGenerating()
     {
         rooms.Clear();
         doors.Clear();
@@ -84,11 +84,6 @@ public class DungeonRoom : MonoBehaviour
             GenerateWalls(room);
             GenerateFloor(room);
             GenerateInterior(room);
-        }
-
-        foreach (Door door in doors)
-        {
-            Instantiate(doorPrefab, door.position, Quaternion.identity, transform);
         }
     }
 
@@ -122,7 +117,7 @@ public class DungeonRoom : MonoBehaviour
 
             GameObject wallPrefab = wallPrefabs[Random.Range(0, wallPrefabs.Length)];
             GameObject wall = Instantiate(wallPrefab, transform);
-            wall.transform.position = startPos + dir * (placed + cover / 2);
+            wall.transform.localPosition = startPos + dir * (placed + cover / 2);
             wall.transform.rotation = Quaternion.Euler(0f, angle, 0f);
             wall.transform.localScale = new Vector3(scale, 1f, 1f);
 
@@ -133,7 +128,8 @@ public class DungeonRoom : MonoBehaviour
     private void GenerateFloor(Room room)
     {
         GameObject floor = Instantiate(floorPrefab, transform);
-        floor.transform.position = room.center;
+        //floor.transform.position = room.center;
+        floor.transform.localPosition = room.center;
         floor.transform.localScale = new Vector3(room.width, 0.1f, room.length);
     }
 
@@ -187,11 +183,17 @@ public class DungeonRoom : MonoBehaviour
 
             if (IsSpaceFree(randomPosition, tableSize, Quaternion.identity, furnitureLayer))
             {
-                Instantiate(tablePrefab, randomPosition, Quaternion.identity, transform);
+                //Instantiate(tablePrefab, randomPosition, Quaternion.identity, transform);
+                var table = Instantiate(tablePrefab, transform);
+                table.transform.localPosition = randomPosition;
+                table.transform.localRotation = Quaternion.identity;
 
                 for (int i = 0; i < chairPositions.Length; i++)
                 {
-                    Instantiate(chairPrefab, chairPositions[i], chairOrientations[i], transform);
+                    //Instantiate(chairPrefab, chairPositions[i], chairOrientations[i], transform);
+                    var chair = Instantiate(chairPrefab, transform);
+                    chair.transform.localPosition = chairPositions[i];
+                    chair.transform.localRotation = chairOrientations[i];
                 }
             }
             else
@@ -245,7 +247,10 @@ public class DungeonRoom : MonoBehaviour
 
                 if (IsSpaceFree(chestPosition, chestSize, chestRotation, furnitureLayer))
                 {
-                    Instantiate(chestPrefab, chestPosition, chestRotation, transform);
+                    //Instantiate(chestPrefab, chestPosition, chestRotation, transform);
+                    var chest = Instantiate(chestPrefab, transform);
+                    chest.transform.localPosition = chestPosition;
+                    chest.transform.localRotation = chestRotation;
                 }
                 else
                 {
@@ -302,7 +307,10 @@ public class DungeonRoom : MonoBehaviour
 
             if (IsSpaceFree(bedPosition, bedsize, bedRotation, furnitureLayer))
             {
-                Instantiate(bedPrefab, bedPosition, bedRotation, transform);
+                //Instantiate(bedPrefab, bedPosition, bedRotation, transform);
+                var bed = Instantiate(bedPrefab, transform);
+                bed.transform.localPosition = bedPosition;
+                bed.transform.localRotation = bedRotation;
             }
             else
             {
@@ -310,16 +318,6 @@ public class DungeonRoom : MonoBehaviour
                 Debug.LogError($"Cant place {nameof(bedPrefab)} at {bedPosition}");
             }
         }
-    }
-
-    //Move potentially to a GridManager
-    private void InitializeGrid(Vector3 roomSize, float cellSize = 1f)
-    {
-        gridWidth = Mathf.CeilToInt(roomSize.x);
-        gridHeight = Mathf.CeilToInt(5f / cellSize); //Play with the ceiling size as this might not be correct
-        gridLenght = Mathf.CeilToInt(roomSize.z);
-
-        grid = new bool[gridWidth, gridHeight, gridLenght];
     }
 
     private bool IsSpaceFree(Vector3 position, Vector3 size, Quaternion rotation, LayerMask layerMask)
