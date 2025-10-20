@@ -9,7 +9,7 @@ public class RoomFirstDungeonGenerator : AbstractDungeonGenerator
     [SerializeField] private int minZWidth;
     [SerializeField] private int dungeonSizeX;
     [SerializeField] private int dungeonSizeZ;
-    [SerializeField, Range(1, 10)] private int offset;
+    [SerializeField, Range(1, 5)] private int offset;
 
     private float roomScale = 4f;
     protected override void RunProceduralGeneration()

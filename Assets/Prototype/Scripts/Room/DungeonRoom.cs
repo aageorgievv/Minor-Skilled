@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UIElements;
+using static DungeonRoom;
 
 public class DungeonRoom : MonoBehaviour
 {
@@ -49,11 +50,10 @@ public class DungeonRoom : MonoBehaviour
         furnitureLayer = LayerMask.GetMask("Furniture");
     }
 
-/*    private void Update()
+    private void Update()
     {
         if (size != lastSize)
         {
-            InitializeGrid(new Vector3(size.x, 5, size.y));
 
             lastSize = size;
 
@@ -64,13 +64,14 @@ public class DungeonRoom : MonoBehaviour
 
             StartGenerating();
         }
-    }*/
+    }
 
     public void StartGenerating()
     {
         rooms.Clear();
         doors.Clear();
 
+        // Replace size with the size property from the BSP algorithm
         Room dungeonRoom = new Room(Vector3.zero, size.x, size.y);
         rooms.Add(dungeonRoom);
 
@@ -135,6 +136,7 @@ public class DungeonRoom : MonoBehaviour
 
     private void GenerateInterior(Room room)
     {
+        placements.Clear();
         GenerateTableAndChairs(room, 0);
         GenerateBeds(room, 0);
         GenerateChest(room);
@@ -151,7 +153,7 @@ public class DungeonRoom : MonoBehaviour
         if (room.width >= tableSizeSpawn && room.length >= tableSizeSpawn && longTablePrefabs.Length > 0 && chairPrefab != null)
         {
             GameObject tablePrefab = longTablePrefabs[Random.Range(0, longTablePrefabs.Length)];
-            Vector3 tableSize = tablePrefab.GetComponent<BoxCollider>().size;
+            BoxCollider boxCollider = tablePrefab.GetComponent<BoxCollider>();
 
             float offset = Random.Range(5, 10);
             float halfWidth = room.width / 2f;
@@ -181,12 +183,28 @@ public class DungeonRoom : MonoBehaviour
 
             };
 
-            if (IsSpaceFree(randomPosition, tableSize, Quaternion.identity, furnitureLayer))
+            Vector3 worldTablePosition = transform.TransformPoint(randomPosition);
+            Quaternion worldTableRotation = transform.rotation * Quaternion.identity;
+            Debug.Log($"Table worldPosition {worldTablePosition}");
+
+
+            if (IsSpaceFree(worldTablePosition, boxCollider.size * 0.5f, worldTableRotation, furnitureLayer))
             {
                 //Instantiate(tablePrefab, randomPosition, Quaternion.identity, transform);
                 var table = Instantiate(tablePrefab, transform);
                 table.transform.localPosition = randomPosition;
                 table.transform.localRotation = Quaternion.identity;
+                Debug.Log($"Placing table at {randomPosition}");
+                Physics.SyncTransforms();
+
+                //Debug
+                placements.Add(new Placement()
+                {
+                    position = worldTablePosition,
+                    rotation = worldTableRotation,
+                    size = boxCollider.size
+                });
+
 
                 for (int i = 0; i < chairPositions.Length; i++)
                 {
@@ -199,7 +217,7 @@ public class DungeonRoom : MonoBehaviour
             else
             {
                 GenerateTableAndChairs(room, ++iteration);
-                Debug.LogError($"Cant place {nameof(tablePrefab)} at {randomPosition}");
+                //Debug.LogError($"Cant place {nameof(tablePrefab)} at {randomPosition}");
             }
         }
     }
@@ -209,7 +227,7 @@ public class DungeonRoom : MonoBehaviour
         if (room.width >= chestSizeSpawn && room.length != chestSizeSpawn && emptyChestPrefab != null && treasureChestPrefab != null)
         {
             GameObject chestPrefab = Random.value < 0.5f ? emptyChestPrefab : treasureChestPrefab;
-            Vector3 chestSize = chestPrefab.GetComponent<BoxCollider>().size;
+            BoxCollider boxCollider = chestPrefab.GetComponent<BoxCollider>();
 
             float halfWidth = room.width / 2f;
             float halfLength = room.length / 2f;
@@ -245,16 +263,32 @@ public class DungeonRoom : MonoBehaviour
                         break;
                 }
 
-                if (IsSpaceFree(chestPosition, chestSize, chestRotation, furnitureLayer))
+                Vector3 worldChestPosition = transform.TransformPoint(chestPosition);
+                Quaternion worldChestRotation = transform.rotation * chestRotation;
+                Debug.Log($"Chest worldPosition {worldChestPosition}");
+
+
+                if (IsSpaceFree(worldChestPosition, boxCollider.size * 0.5f, worldChestRotation, furnitureLayer))
                 {
+                    //Debug
+                    placements.Add(new Placement()
+                    {
+                        position = worldChestPosition,
+                        rotation = worldChestRotation,
+                        size = boxCollider.size
+                    });
+
                     //Instantiate(chestPrefab, chestPosition, chestRotation, transform);
                     var chest = Instantiate(chestPrefab, transform);
                     chest.transform.localPosition = chestPosition;
                     chest.transform.localRotation = chestRotation;
+                    Physics.SyncTransforms();
+                    Debug.Log($"Placing chest at {chestPosition}");
+
                 }
                 else
                 {
-                    Debug.LogError($"Cant place {nameof(chairPrefab)} at {chestPosition}");
+                    //Debug.LogError($"Cant place {nameof(chairPrefab)} at {chestPosition}");
                 }
             }
         }
@@ -271,7 +305,7 @@ public class DungeonRoom : MonoBehaviour
         if (room.width >= bedSizeSpawn && room.length != bedSizeSpawn && bedPrefabs.Length > 0)
         {
             GameObject bedPrefab = bedPrefabs[Random.Range(0, bedPrefabs.Length)];
-            Vector3 bedsize = bedPrefab.GetComponent<BoxCollider>().size;
+            BoxCollider boxCollider = bedPrefab.GetComponent<BoxCollider>();
 
             float halfWidth = room.width / 2f;
             float halfLength = room.length / 2f;
@@ -305,25 +339,57 @@ public class DungeonRoom : MonoBehaviour
                     break;
             }
 
-            if (IsSpaceFree(bedPosition, bedsize, bedRotation, furnitureLayer))
+            Vector3 worldBedPosition = transform.TransformPoint(bedPosition);
+            Quaternion worldBedRotation = transform.rotation * bedRotation;
+            Debug.Log($"Bed worldPosition {worldBedPosition}");
+
+            if (IsSpaceFree(worldBedPosition, boxCollider.size * 0.5f, worldBedRotation, furnitureLayer))
             {
+                //Debug
+                placements.Add(new Placement()
+                {
+                    position = worldBedPosition,
+                    rotation = worldBedRotation,
+                    size = boxCollider.size
+                });
+
                 //Instantiate(bedPrefab, bedPosition, bedRotation, transform);
                 var bed = Instantiate(bedPrefab, transform);
                 bed.transform.localPosition = bedPosition;
                 bed.transform.localRotation = bedRotation;
+                Physics.SyncTransforms();
+                Debug.Log($"Placing Bed at {bedPosition}");
             }
             else
             {
                 GenerateBeds(room, ++iteration);
-                Debug.LogError($"Cant place {nameof(bedPrefab)} at {bedPosition}");
+               // Debug.LogError($"Cant place {nameof(bedPrefab)} at {bedPosition}");
             }
         }
     }
 
-    private bool IsSpaceFree(Vector3 position, Vector3 size, Quaternion rotation, LayerMask layerMask)
+    //Debug
+    public struct Placement
     {
-        Collider[] hits = Physics.OverlapBox(position, size, rotation, layerMask);
+        public Vector3 position;
+        public Quaternion rotation;
+        public Vector3 size;
+    }
 
+    private readonly List<Placement> placements = new List<Placement>();
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.red;
+
+        foreach (Placement placement in placements)
+        {
+            Gizmos.DrawCube(placement.position, placement.size);
+        }
+    }
+
+    private bool IsSpaceFree(Vector3 worldPosition, Vector3 halfExtents, Quaternion worldRotation, LayerMask layerMask)
+    {
+        Collider[] hits = Physics.OverlapBox(worldPosition, halfExtents, worldRotation, layerMask);
         return hits.Length == 0;
     }
 }

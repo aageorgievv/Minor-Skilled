@@ -148,14 +148,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 57b3822b7928eae4fb72b726e09081fe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  startPosition: {x: 0, y: 0, z: 0}
   roomPrefab: {fileID: 4150566507005875502, guid: b5e9a0569285e134587a068caa5a559d, type: 3}
-  planePrefab: {fileID: 5858374769275457202, guid: b5cbbee7c5a7e9340be304055a49dbed, type: 3}
   minXWidth: 3
   minZWidth: 3
   dungeonSizeX: 20
   dungeonSizeZ: 20
-  offset: 1000
+  offset: 5
 --- !u!4 &383634803
 Transform:
   m_ObjectHideFlags: 0
@@ -437,6 +435,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 4150566507005875502, guid: b5e9a0569285e134587a068caa5a559d, type: 3}
+      propertyPath: tableSizeSpawn
+      value: 10
+      objectReference: {fileID: 0}
     - target: {fileID: 6266124836317640372, guid: b5e9a0569285e134587a068caa5a559d, type: 3}
       propertyPath: m_Name
       value: RoomGeneration
