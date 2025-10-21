@@ -1,51 +1,25 @@
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.UIElements;
-using static DungeonRoom;
+using static BedroomRoom;
 
-public class DungeonRoom : MonoBehaviour
+public abstract class DungeonRoom : MonoBehaviour
 {
-    [Header("Room")]
-    [SerializeField] private GameObject[] wallPrefabs;
-    [SerializeField] private GameObject doorPrefab;
-    [SerializeField] private GameObject floorPrefab;
-
-    [Header("Interior/Furniture")]
-    [SerializeField] private GameObject[] longTablePrefabs;
-    [SerializeField] private GameObject[] bedPrefabs;
-    [SerializeField] private GameObject chairPrefab;
-
-    [Header("Treasure/Loot")]
-    [SerializeField] private GameObject emptyChestPrefab;
-    [SerializeField] private GameObject treasureChestPrefab;
+    [Header("Room Shell")]
+    [SerializeField] protected GameObject[] wallPrefabs;
+    [SerializeField] protected GameObject doorPrefab;
+    [SerializeField] protected GameObject floorPrefab;
 
     [Header("Generation settings")]
     [SerializeField, Min(1f)] public Vector2 size;
-    [SerializeField] private int tableSizeSpawn = 6;
-    [SerializeField] private int chestSizeSpawn = 3;
-    [SerializeField] private int bedSizeSpawn = 2;
 
-
-    [Header("Settings")]
-    [SerializeField, Range(1, 5)] private int maxChestSpawnAmount = 3;
-
-
+    protected const int maxPlacementIterations = 500;
     protected List<Room> rooms = new List<Room>();
     protected List<Door> doors = new List<Door>();
 
     private Vector2 lastSize;
-
-    private bool[,,] grid;
-    private int gridWidth;
-    private int gridHeight;
-    private int gridLenght;
-
     private LayerMask furnitureLayer;
 
-    private const int maxBedIterations = 500;
-
-    private void Start()
+    protected virtual void Start()
     {
         furnitureLayer = LayerMask.GetMask("Furniture");
     }
@@ -54,14 +28,11 @@ public class DungeonRoom : MonoBehaviour
     {
         if (size != lastSize)
         {
-
             lastSize = size;
-
             foreach (Transform child in transform)
             {
                 Destroy(child.gameObject);
             }
-
             StartGenerating();
         }
     }
@@ -71,21 +42,12 @@ public class DungeonRoom : MonoBehaviour
         rooms.Clear();
         doors.Clear();
 
-        // Replace size with the size property from the BSP algorithm
-        Room dungeonRoom = new Room(Vector3.zero, size.x, size.y);
-        rooms.Add(dungeonRoom);
+        Room currentRoom = new Room(Vector3.zero, size.x, size.y);
+        rooms.Add(currentRoom);
 
-        GenerateRooms();
-    }
-
-    private void GenerateRooms()
-    {
-        foreach (Room room in rooms)
-        {
-            GenerateWalls(room);
-            GenerateFloor(room);
-            GenerateInterior(room);
-        }
+        GenerateWalls(currentRoom);
+        GenerateFloor(currentRoom);
+        GenerateInterior(currentRoom);
     }
 
     private void GenerateWalls(Room room)
@@ -129,263 +91,44 @@ public class DungeonRoom : MonoBehaviour
     private void GenerateFloor(Room room)
     {
         GameObject floor = Instantiate(floorPrefab, transform);
-        //floor.transform.position = room.center;
         floor.transform.localPosition = room.center;
         floor.transform.localScale = new Vector3(room.width, 0.1f, room.length);
     }
 
-    private void GenerateInterior(Room room)
+    protected bool TryPlaceObject(GameObject prefab, Vector3 localPosition, Quaternion localRotation)
     {
-        placements.Clear();
-        GenerateTableAndChairs(room, 0);
-        GenerateBeds(room, 0);
-        GenerateChest(room);
-    }
-
-    private void GenerateTableAndChairs(Room room, int iteration)
-    {
-        if (iteration > maxBedIterations)
+        if(prefab == null)
         {
-            Debug.LogError("Fail safe while generating table/chairs");
-            return;
+            Debug.LogError($"The prefab: {nameof(prefab)} is null");
+            return false;
         }
 
-        if (room.width >= tableSizeSpawn && room.length >= tableSizeSpawn && longTablePrefabs.Length > 0 && chairPrefab != null)
+        BoxCollider collider = prefab.GetComponent<BoxCollider>();
+
+        if (collider == null)
         {
-            GameObject tablePrefab = longTablePrefabs[Random.Range(0, longTablePrefabs.Length)];
-            BoxCollider boxCollider = tablePrefab.GetComponent<BoxCollider>();
-
-            float offset = Random.Range(5, 10);
-            float halfWidth = room.width / 2f;
-            float halfLength = room.length / 2f;
-
-            float randomX = Random.Range(room.center.x - halfWidth + offset, room.center.x + halfWidth - offset);
-            float randomZ = Random.Range(room.center.z - halfLength + offset, room.center.z + halfLength - offset);
-
-            Vector3 randomPosition = new Vector3(randomX, 0, randomZ);
-
-            float chairOffsetX = 1.5f;
-            float chairOffsetZ = 1f;
-            Vector3[] chairPositions =
-            {
-                randomPosition + new Vector3(chairOffsetX, 0, -chairOffsetZ),
-                randomPosition + new Vector3(chairOffsetX, 0, chairOffsetZ),
-                randomPosition + new Vector3(-chairOffsetX, 0, -chairOffsetZ),
-                randomPosition + new Vector3(-chairOffsetX, 0, chairOffsetZ),
-            };
-
-            Quaternion[] chairOrientations =
-            {
-                Quaternion.Euler(0, 180, 0),
-                Quaternion.Euler(0, 180, 0),
-                Quaternion.Euler(0, 0, 0),
-                Quaternion.Euler(0, 0, 0),
-
-            };
-
-            Vector3 worldTablePosition = transform.TransformPoint(randomPosition);
-            Quaternion worldTableRotation = transform.rotation * Quaternion.identity;
-            Debug.Log($"Table worldPosition {worldTablePosition}");
-
-
-            if (IsSpaceFree(worldTablePosition, boxCollider.size * 0.5f, worldTableRotation, furnitureLayer))
-            {
-                //Instantiate(tablePrefab, randomPosition, Quaternion.identity, transform);
-                var table = Instantiate(tablePrefab, transform);
-                table.transform.localPosition = randomPosition;
-                table.transform.localRotation = Quaternion.identity;
-                Debug.Log($"Placing table at {randomPosition}");
-                Physics.SyncTransforms();
-
-                //Debug
-                placements.Add(new Placement()
-                {
-                    position = worldTablePosition,
-                    rotation = worldTableRotation,
-                    size = boxCollider.size
-                });
-
-
-                for (int i = 0; i < chairPositions.Length; i++)
-                {
-                    //Instantiate(chairPrefab, chairPositions[i], chairOrientations[i], transform);
-                    var chair = Instantiate(chairPrefab, transform);
-                    chair.transform.localPosition = chairPositions[i];
-                    chair.transform.localRotation = chairOrientations[i];
-                }
-            }
-            else
-            {
-                GenerateTableAndChairs(room, ++iteration);
-                //Debug.LogError($"Cant place {nameof(tablePrefab)} at {randomPosition}");
-            }
-        }
-    }
-
-    private void GenerateChest(Room room)
-    {
-        if (room.width >= chestSizeSpawn && room.length != chestSizeSpawn && emptyChestPrefab != null && treasureChestPrefab != null)
-        {
-            GameObject chestPrefab = Random.value < 0.5f ? emptyChestPrefab : treasureChestPrefab;
-            BoxCollider boxCollider = chestPrefab.GetComponent<BoxCollider>();
-
-            float halfWidth = room.width / 2f;
-            float halfLength = room.length / 2f;
-            float offset = 1f;
-            int chestSpawnAmount = Random.Range(0, maxChestSpawnAmount + 1);
-
-            for (int i = 0; i < chestSpawnAmount; i++)
-            {
-                int wall = Random.Range(0, 4);
-                Vector3 chestPosition = Vector3.zero;
-                Quaternion chestRotation = Quaternion.identity;
-
-                float randomX = Random.Range(room.center.x - halfWidth + offset, room.center.x + halfWidth - offset);
-                float randomZ = Random.Range(room.center.z - halfLength + offset, room.center.z + halfLength - offset);
-
-                switch (wall)
-                {
-                    case 0: // Top wall
-                        chestPosition = new Vector3(randomX, 0, room.center.z + halfLength - offset);
-                        chestRotation = Quaternion.Euler(0, 180, 0);
-                        break;
-                    case 1: // Bottom wall
-                        chestPosition = new Vector3(randomX, 0, room.center.z - halfLength + offset);
-                        chestRotation = Quaternion.Euler(0, 0, 0);
-                        break;
-                    case 2: // Right wall
-                        chestPosition = new Vector3(room.center.x + halfWidth - offset, 0, randomZ);
-                        chestRotation = Quaternion.Euler(0, -90, 0);
-                        break;
-                    case 3: // Left wall
-                        chestPosition = new Vector3(room.center.x - halfWidth + offset, 0, randomZ);
-                        chestRotation = Quaternion.Euler(0, 90, 0);
-                        break;
-                }
-
-                Vector3 worldChestPosition = transform.TransformPoint(chestPosition);
-                Quaternion worldChestRotation = transform.rotation * chestRotation;
-                Debug.Log($"Chest worldPosition {worldChestPosition}");
-
-
-                if (IsSpaceFree(worldChestPosition, boxCollider.size * 0.5f, worldChestRotation, furnitureLayer))
-                {
-                    //Debug
-                    placements.Add(new Placement()
-                    {
-                        position = worldChestPosition,
-                        rotation = worldChestRotation,
-                        size = boxCollider.size
-                    });
-
-                    //Instantiate(chestPrefab, chestPosition, chestRotation, transform);
-                    var chest = Instantiate(chestPrefab, transform);
-                    chest.transform.localPosition = chestPosition;
-                    chest.transform.localRotation = chestRotation;
-                    Physics.SyncTransforms();
-                    Debug.Log($"Placing chest at {chestPosition}");
-
-                }
-                else
-                {
-                    //Debug.LogError($"Cant place {nameof(chairPrefab)} at {chestPosition}");
-                }
-            }
-        }
-    }
-
-    private void GenerateBeds(Room room, int iteration)
-    {
-        if (iteration > maxBedIterations)
-        {
-
-            return;
+            Debug.LogError($"The prefab: {nameof(prefab)} is missing a BoxCollider");
+            return false;
         }
 
-        if (room.width >= bedSizeSpawn && room.length != bedSizeSpawn && bedPrefabs.Length > 0)
+        Vector3 worldPosition = transform.TransformPoint(localPosition);
+        Quaternion worldRotation = transform.rotation * localRotation;
+
+        if(IsSpaceFree(worldPosition, collider.size * 0.5f, worldRotation, furnitureLayer))
         {
-            GameObject bedPrefab = bedPrefabs[Random.Range(0, bedPrefabs.Length)];
-            BoxCollider boxCollider = bedPrefab.GetComponent<BoxCollider>();
+            GameObject newObject = Instantiate(prefab, transform);
+            newObject.transform.localPosition = localPosition;
+            newObject.transform.localRotation = localRotation;
+            Physics.SyncTransforms();
 
-            float halfWidth = room.width / 2f;
-            float halfLength = room.length / 2f;
-            float offset1 = 1.5f;
-            float offset2 = 2f;
-
-            int corner = Random.Range(0, 4);
-            Vector3 bedPosition = Vector3.zero;
-            Quaternion bedRotation = Quaternion.identity;
-
-            switch (corner)
-            {
-                case 0: // bottom-left
-                    bedPosition = new Vector3(room.center.x - halfWidth + offset2, 0, room.center.z - halfLength + offset1);
-                    bedRotation = Quaternion.Euler(0, 90, 0);
-                    break;
-
-                case 1: // bottom-right
-                    bedPosition = new Vector3(room.center.x + halfWidth - offset1, 0, room.center.z - halfLength + offset2);
-                    bedRotation = Quaternion.Euler(0, 0, 0);
-                    break;
-
-                case 2: // top-left
-                    bedPosition = new Vector3(room.center.x - halfWidth + offset1, 0, room.center.z + halfLength - offset2);
-                    bedRotation = Quaternion.Euler(0, 180, 0);
-                    break;
-
-                case 3: // top-right
-                    bedPosition = new Vector3(room.center.x + halfWidth - offset2, 0, room.center.z + halfLength - offset1);
-                    bedRotation = Quaternion.Euler(0, -90, 0);
-                    break;
-            }
-
-            Vector3 worldBedPosition = transform.TransformPoint(bedPosition);
-            Quaternion worldBedRotation = transform.rotation * bedRotation;
-            Debug.Log($"Bed worldPosition {worldBedPosition}");
-
-            if (IsSpaceFree(worldBedPosition, boxCollider.size * 0.5f, worldBedRotation, furnitureLayer))
-            {
-                //Debug
-                placements.Add(new Placement()
-                {
-                    position = worldBedPosition,
-                    rotation = worldBedRotation,
-                    size = boxCollider.size
-                });
-
-                //Instantiate(bedPrefab, bedPosition, bedRotation, transform);
-                var bed = Instantiate(bedPrefab, transform);
-                bed.transform.localPosition = bedPosition;
-                bed.transform.localRotation = bedRotation;
-                Physics.SyncTransforms();
-                Debug.Log($"Placing Bed at {bedPosition}");
-            }
-            else
-            {
-                GenerateBeds(room, ++iteration);
-               // Debug.LogError($"Cant place {nameof(bedPrefab)} at {bedPosition}");
-            }
+            Debug.Log($"Placing {nameof(prefab)} at {localPosition}");
+            return true;
         }
+
+        return false;
     }
 
-    //Debug
-    public struct Placement
-    {
-        public Vector3 position;
-        public Quaternion rotation;
-        public Vector3 size;
-    }
-
-    private readonly List<Placement> placements = new List<Placement>();
-    private void OnDrawGizmos()
-    {
-        Gizmos.color = Color.red;
-
-        foreach (Placement placement in placements)
-        {
-            Gizmos.DrawCube(placement.position, placement.size);
-        }
-    }
+    protected abstract void GenerateInterior(Room room);
 
     private bool IsSpaceFree(Vector3 worldPosition, Vector3 halfExtents, Quaternion worldRotation, LayerMask layerMask)
     {

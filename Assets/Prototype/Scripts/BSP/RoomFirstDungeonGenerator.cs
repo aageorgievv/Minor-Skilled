@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class RoomFirstDungeonGenerator : AbstractDungeonGenerator
@@ -34,7 +33,15 @@ public class RoomFirstDungeonGenerator : AbstractDungeonGenerator
         Vector3 worldCenter = roomCenter * roomScale;
         Vector2 roomSize = new Vector2(roomBounds.size.x * roomScale, roomBounds.size.z * roomScale);
 
-        DungeonRoom newRoom = Instantiate(roomPrefab, worldCenter, Quaternion.identity, transform);
+        if (roomPrefabs == null || roomPrefabs.Length == 0)
+        {
+            Debug.LogError("No room prefabs assigned in the generator!");
+            return;
+        }
+
+        DungeonRoom randomRoomPrefab = roomPrefabs[UnityEngine.Random.Range(0, roomPrefabs.Length)];
+
+        DungeonRoom newRoom = Instantiate(randomRoomPrefab, worldCenter, Quaternion.identity, transform);
         newRoom.size = roomSize;
         newRoom.StartGenerating();
     }
