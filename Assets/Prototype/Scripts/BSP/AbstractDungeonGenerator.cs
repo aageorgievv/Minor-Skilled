@@ -22,5 +22,13 @@ public abstract class AbstractDungeonGenerator : MonoBehaviour
         RunProceduralGeneration();
     }
 
+    public void DeleteGeneration()
+    {
+        for (int i = transform.childCount - 1; i >= 0; i--)
+        {
+            DestroyImmediate(transform.GetChild(i).gameObject);
+        }
+    }
+
     protected abstract void RunProceduralGeneration();
 }

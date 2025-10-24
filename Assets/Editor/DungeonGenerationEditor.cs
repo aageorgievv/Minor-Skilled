@@ -19,5 +19,10 @@ public class DungeonGenerationEditor : Editor
         {
             generator.GenerateDungeon();
         }
+
+        if(GUILayout.Button("Delete Generation"))
+        {
+            generator.DeleteGeneration();
+        }
     }
 }
