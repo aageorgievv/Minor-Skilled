@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using UnityEngine;
-using static BedroomRoom;
 
 public abstract class DungeonRoom : MonoBehaviour
 {

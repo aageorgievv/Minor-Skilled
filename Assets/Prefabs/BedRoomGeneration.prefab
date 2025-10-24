@@ -9,9 +9,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6674789288354106939}
-  - component: {fileID: 4150566507005875502}
+  - component: {fileID: 1688757068730732720}
   m_Layer: 0
-  m_Name: RoomGeneration
+  m_Name: BedRoomGeneration
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -32,7 +32,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &4150566507005875502
+--- !u!114 &1688757068730732720
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -41,18 +41,18 @@ MonoBehaviour:
   m_GameObject: {fileID: 6266124836317640372}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 49c434560aba7ff4ba11d35f55ee2481, type: 3}
+  m_Script: {fileID: 11500000, guid: 09e4c0257036885408cd2fd582307c60, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   wallPrefabs:
   - {fileID: 919132149155446097, guid: 25cf937b7c6cadf4fa613c6d4454de5a, type: 3}
-  - {fileID: 919132149155446097, guid: 43a3e68adda43be428e9c13d313eecc7, type: 3}
-  - {fileID: 919132149155446097, guid: 85a46157dbc159543a29f0f219e4c453, type: 3}
   - {fileID: 919132149155446097, guid: d342571d08926a84d99ae05004ff39cc, type: 3}
+  - {fileID: 919132149155446097, guid: e057e8ab36593de4c9e900f6f594587b, type: 3}
   - {fileID: 919132149155446097, guid: 77652e85be75e51499296ab6d52142a3, type: 3}
-  - {fileID: 919132149155446097, guid: e6a1cdb745165e240acf4129b7b726d0, type: 3}
-  doorPrefab: {fileID: 919132149155446097, guid: 2f93e85298b0dfe4fbc01cb9acabe786, type: 3}
+  - {fileID: 919132149155446097, guid: 5075d87ee832ffc41af41b26c84e7ddb, type: 3}
+  doorPrefab: {fileID: 0}
   floorPrefab: {fileID: 3068211032169242613, guid: 1c59ea643dcbd0e4e8288239c3eefb6e, type: 3}
+  size: {x: 10, y: 10}
   longTablePrefabs:
   - {fileID: 677044114946480800, guid: 41eba915bb6c9c0468eb9c652931207b, type: 3}
   - {fileID: 5094555022962229818, guid: 7b022caf150dc4a4ba3b33c7749655c7, type: 3}
@@ -65,7 +65,6 @@ MonoBehaviour:
   chairPrefab: {fileID: 2382700466248928502, guid: 47590335a5c652841ad2024ddec867ae, type: 3}
   emptyChestPrefab: {fileID: 6615146264328433009, guid: e2c4d452f7b455b4f963dd045658af7b, type: 3}
   treasureChestPrefab: {fileID: 1065950770545869691, guid: 9ebc683bc87b0504a981cfe17048c74a, type: 3}
-  size: {x: 10, y: 10}
   tableSizeSpawn: 10
   chestSizeSpawn: 3
   bedSizeSpawn: 2
