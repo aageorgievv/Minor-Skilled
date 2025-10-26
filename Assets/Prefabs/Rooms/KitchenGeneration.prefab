@@ -1,0 +1,73 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &5983985850699420838
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4065838837414497796}
+  - component: {fileID: 723959277400453859}
+  m_Layer: 0
+  m_Name: KitchenGeneration
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 2147483647
+  m_IsActive: 1
+--- !u!4 &4065838837414497796
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5983985850699420838}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &723959277400453859
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5983985850699420838}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 82c676603b09c33468d561eed7d0c991, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  wallPrefabs:
+  - {fileID: 919132149155446097, guid: 25cf937b7c6cadf4fa613c6d4454de5a, type: 3}
+  - {fileID: 919132149155446097, guid: d342571d08926a84d99ae05004ff39cc, type: 3}
+  - {fileID: 919132149155446097, guid: 5075d87ee832ffc41af41b26c84e7ddb, type: 3}
+  doorPrefab: {fileID: 0}
+  floorPrefab: {fileID: 3068211032169242613, guid: 1c59ea643dcbd0e4e8288239c3eefb6e, type: 3}
+  size: {x: 12, y: 12}
+  barPresetPrefab: {fileID: 3911629406946552416, guid: c9ed8781044505d489b73fdfb0c14ee0, type: 3}
+  barrelPrefabs:
+  - {fileID: 9089401514291895931, guid: 589e7f56b1ff39b4f999ff40d2e7381b, type: 3}
+  - {fileID: 3940669880384845609, guid: fc5c84aae091c0a49b401145632bad02, type: 3}
+  - {fileID: 1358171075417078754, guid: 2e057db3c898ff14fa5db79d617f245f, type: 3}
+  - {fileID: 5003181503011516636, guid: ada5bc62aa9e9654cb7059aed12d2ede, type: 3}
+  - {fileID: 7533292119581798347, guid: 562b31a58584a5f41a4a666c90b86aad, type: 3}
+  - {fileID: 7235611665616246327, guid: b8342f61bd4a9d3448a77390288fcd6e, type: 3}
+  - {fileID: 8303590163530051151, guid: ecc99abe7e30d2f42885a3197020e043, type: 3}
+  longTablePrefabs:
+  - {fileID: 677044114946480800, guid: 41eba915bb6c9c0468eb9c652931207b, type: 3}
+  - {fileID: 5094555022962229818, guid: 7b022caf150dc4a4ba3b33c7749655c7, type: 3}
+  - {fileID: 633646106028526738, guid: 875f29c5f421e0241883eda0d7d4dbed, type: 3}
+  - {fileID: 144181475215857399, guid: 35e87ed346d5a774eaaa0865646b0f51, type: 3}
+  - {fileID: 4803803265964052303, guid: ccb799e72bbe23a4c83b342751b1f24d, type: 3}
+  chairPrefab: {fileID: 2382700466248928502, guid: 47590335a5c652841ad2024ddec867ae, type: 3}
+  barSizeSpawn: 12
+  tableSizeSpawn: 12
+  BarrelSizeSpawn: 12
+  barrelSpawnAmount: 5

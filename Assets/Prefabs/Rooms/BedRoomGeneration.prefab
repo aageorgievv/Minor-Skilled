@@ -54,11 +54,10 @@ MonoBehaviour:
   floorPrefab: {fileID: 3068211032169242613, guid: 1c59ea643dcbd0e4e8288239c3eefb6e, type: 3}
   size: {x: 10, y: 10}
   longTablePrefabs:
-  - {fileID: 677044114946480800, guid: 41eba915bb6c9c0468eb9c652931207b, type: 3}
-  - {fileID: 5094555022962229818, guid: 7b022caf150dc4a4ba3b33c7749655c7, type: 3}
-  - {fileID: 633646106028526738, guid: 875f29c5f421e0241883eda0d7d4dbed, type: 3}
-  - {fileID: 144181475215857399, guid: 35e87ed346d5a774eaaa0865646b0f51, type: 3}
-  - {fileID: 4803803265964052303, guid: ccb799e72bbe23a4c83b342751b1f24d, type: 3}
+  - {fileID: 8205830980754337979, guid: 8c25560930dbe5c42b7c529ac55f3c18, type: 3}
+  - {fileID: 6872242499444429312, guid: 9c30c576000b6374b8c5567cce73b2f1, type: 3}
+  - {fileID: 9102997099230538589, guid: 54e5c4a14014c5b4b8e1840d4cfa901f, type: 3}
+  - {fileID: 7457671586224943416, guid: af9905652aa56134981a3167b9b792b1, type: 3}
   bedPrefabs:
   - {fileID: 3510615712679776044, guid: 1c217bc5c86793743b8d470702a8d27d, type: 3}
   - {fileID: 1815131009555423275, guid: 7a906979ebc424c46abe5aca418ef473, type: 3}

@@ -4,7 +4,7 @@ using UnityEngine;
 public class BedroomRoom : DungeonRoom
 {
     [Header("Interior/Furniture")]
-    [SerializeField] private GameObject[] longTablePrefabs;
+    [SerializeField] private GameObject[] tablePrefabs;
     [SerializeField] private GameObject[] bedPrefabs;
     [SerializeField] private GameObject chairPrefab;
 
@@ -18,8 +18,6 @@ public class BedroomRoom : DungeonRoom
     [SerializeField] private int bedSizeSpawn;
     [SerializeField, Range(1, 5)] private int maxChestSpawnAmount;
 
-    private const int maxBedIterations = 500;
-
     protected override void GenerateInterior(Room room)
     {
         GenerateTableAndChairs(room, 0);
@@ -29,16 +27,15 @@ public class BedroomRoom : DungeonRoom
 
     private void GenerateTableAndChairs(Room room, int iteration)
     {
-        if (iteration > maxBedIterations)
+        if (iteration > maxPlacementIterations)
         {
             Debug.LogError("Fail safe while generating table/chairs");
             return;
         }
 
-        if (room.width >= tableSizeSpawn && room.length >= tableSizeSpawn && longTablePrefabs.Length > 0 && chairPrefab != null)
+        if (room.width >= tableSizeSpawn && room.length >= tableSizeSpawn && tablePrefabs.Length > 0 && chairPrefab != null)
         {
-            GameObject tablePrefab = longTablePrefabs[Random.Range(0, longTablePrefabs.Length)];
-            BoxCollider boxCollider = tablePrefab.GetComponent<BoxCollider>();
+            GameObject tablePrefab = tablePrefabs[Random.Range(0, tablePrefabs.Length)];
 
             float offset = Random.Range(5, 10);
             float halfWidth = room.width / 2f;
@@ -51,22 +48,18 @@ public class BedroomRoom : DungeonRoom
             if (TryPlaceObject(tablePrefab, randomPosition, Quaternion.identity))
             {
                 float chairOffsetX = 1.5f;
-                float chairOffsetZ = 1f;
+                float chairOffsetZ = 0f;
+
                 Vector3[] chairPositions =
                 {
-                randomPosition + new Vector3(chairOffsetX, 0, -chairOffsetZ),
-                randomPosition + new Vector3(chairOffsetX, 0, chairOffsetZ),
-                randomPosition + new Vector3(-chairOffsetX, 0, -chairOffsetZ),
-                randomPosition + new Vector3(-chairOffsetX, 0, chairOffsetZ),
-            };
+                    randomPosition + new Vector3(chairOffsetX, 0, -chairOffsetZ),
+                    randomPosition + new Vector3(-chairOffsetX, 0, chairOffsetZ),
+                };
 
                 Quaternion[] chairOrientations =
                 {
-                Quaternion.Euler(0, 180, 0),
-                Quaternion.Euler(0, 180, 0),
-                Quaternion.Euler(0, 0, 0),
-                Quaternion.Euler(0, 0, 0),
-
+                    Quaternion.Euler(0, 180, 0),
+                    Quaternion.Euler(0, 0, 0),
                 };
 
                 for (int i = 0; i < chairPositions.Length; i++)
@@ -128,7 +121,7 @@ public class BedroomRoom : DungeonRoom
 
     private void GenerateBeds(Room room, int iteration)
     {
-        if (iteration > maxBedIterations)
+        if (iteration > maxPlacementIterations)
         {
 
             return;
@@ -137,7 +130,6 @@ public class BedroomRoom : DungeonRoom
         if (room.width >= bedSizeSpawn && room.length != bedSizeSpawn && bedPrefabs.Length > 0)
         {
             GameObject bedPrefab = bedPrefabs[Random.Range(0, bedPrefabs.Length)];
-            BoxCollider boxCollider = bedPrefab.GetComponent<BoxCollider>();
 
             float halfWidth = room.width / 2f;
             float halfLength = room.length / 2f;
@@ -178,22 +170,22 @@ public class BedroomRoom : DungeonRoom
         }
     }
 
-/*    //Debug
-    public struct Placement
-    {
-        public Vector3 position;
-        public Quaternion rotation;
-        public Vector3 size;
-    }
-
-    private readonly List<Placement> placements = new List<Placement>();
-    private void OnDrawGizmos()
-    {
-        Gizmos.color = Color.red;
-
-        foreach (Placement placement in placements)
+    /*    //Debug
+        public struct Placement
         {
-            Gizmos.DrawCube(placement.position, placement.size);
+            public Vector3 position;
+            public Quaternion rotation;
+            public Vector3 size;
         }
-    }*/
+
+        private readonly List<Placement> placements = new List<Placement>();
+        private void OnDrawGizmos()
+        {
+            Gizmos.color = Color.red;
+
+            foreach (Placement placement in placements)
+            {
+                Gizmos.DrawCube(placement.position, placement.size);
+            }
+        }*/
 }

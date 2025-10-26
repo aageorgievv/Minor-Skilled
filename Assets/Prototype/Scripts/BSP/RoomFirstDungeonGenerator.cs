@@ -8,7 +8,7 @@ public class RoomFirstDungeonGenerator : AbstractDungeonGenerator
     [SerializeField] private int minZWidth;
     [SerializeField] private int dungeonSizeX;
     [SerializeField] private int dungeonSizeZ;
-    [SerializeField, Range(1, 5)] private int offset;
+    [SerializeField, Range(0, 2)] private int offset;
 
     private float roomScale = 4f;
     protected override void RunProceduralGeneration()
@@ -18,12 +18,24 @@ public class RoomFirstDungeonGenerator : AbstractDungeonGenerator
 
     private void CreateRooms()
     {
-        var roomsList = BinarySpacePartitioningAlgorithm.BinarySpacePartitioning(new BoundsInt(startPosition, new Vector3Int(dungeonSizeX, 0, dungeonSizeZ)), minXWidth, minZWidth);
+        int minPartitionX = minXWidth + (offset * 2);
+        int minPartitionZ = minZWidth + (offset * 2);
+        var roomsList = BinarySpacePartitioningAlgorithm.BinarySpacePartitioning(new BoundsInt(startPosition, new Vector3Int(dungeonSizeX, 0, dungeonSizeZ)), minPartitionX, minPartitionZ);
 
         foreach (var roomBounds in roomsList)
         {
-            //Debug.Log($"Room bounds: min({roomBounds.min.x},{roomBounds.min.z}) size({roomBounds.size.x},{roomBounds.size.z})");
-            SpawnRoom(roomBounds);
+            Vector3Int newMin = new Vector3Int(
+                roomBounds.min.x + offset,
+                roomBounds.min.y,
+                roomBounds.min.z + offset);
+
+            Vector3Int newSize = new Vector3Int(
+                roomBounds.size.x - offset,
+                roomBounds.size.y,
+                roomBounds.size.z - offset);
+
+            BoundsInt newBounds = new BoundsInt(newMin, newSize);
+            SpawnRoom(newBounds);
         }
     }
 
