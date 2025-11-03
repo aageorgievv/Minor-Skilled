@@ -20,9 +20,9 @@ public class BedroomRoom : DungeonRoom
 
     protected override void GenerateInterior(Room room)
     {
-        GenerateTableAndChairs(room, 0);
+/*        GenerateTableAndChairs(room, 0);
         GenerateBeds(room, 0);
-        GenerateChest(room);
+        GenerateChest(room);*/
     }
 
     private void GenerateTableAndChairs(Room room, int iteration)
@@ -33,13 +33,13 @@ public class BedroomRoom : DungeonRoom
             return;
         }
 
-        if (room.width >= tableSizeSpawn && room.length >= tableSizeSpawn && tablePrefabs.Length > 0 && chairPrefab != null)
+        if (room.Width >= tableSizeSpawn && room.Length >= tableSizeSpawn && tablePrefabs.Length > 0 && chairPrefab != null)
         {
             GameObject tablePrefab = tablePrefabs[Random.Range(0, tablePrefabs.Length)];
 
             float offset = Random.Range(5, 10);
-            float halfWidth = room.width / 2f;
-            float halfLength = room.length / 2f;
+            float halfWidth = room.Width / 2f;
+            float halfLength = room.Length / 2f;
 
             float randomX = Random.Range(room.center.x - halfWidth + offset, room.center.x + halfWidth - offset);
             float randomZ = Random.Range(room.center.z - halfLength + offset, room.center.z + halfLength - offset);
@@ -76,12 +76,12 @@ public class BedroomRoom : DungeonRoom
 
     private void GenerateChest(Room room)
     {
-        if (room.width >= chestSizeSpawn && room.length != chestSizeSpawn && emptyChestPrefab != null && treasureChestPrefab != null)
+        if (room.Width >= chestSizeSpawn && room.Length != chestSizeSpawn && emptyChestPrefab != null && treasureChestPrefab != null)
         {
             GameObject chestPrefab = Random.value < 0.5f ? emptyChestPrefab : treasureChestPrefab;
 
-            float halfWidth = room.width / 2f;
-            float halfLength = room.length / 2f;
+            float halfWidth = room.Width / 2f;
+            float halfLength = room.Length / 2f;
             float offset = 1f;
             int chestSpawnAmount = Random.Range(0, maxChestSpawnAmount + 1);
 
@@ -127,12 +127,12 @@ public class BedroomRoom : DungeonRoom
             return;
         }
 
-        if (room.width >= bedSizeSpawn && room.length != bedSizeSpawn && bedPrefabs.Length > 0)
+        if (room.Width >= bedSizeSpawn && room.Length != bedSizeSpawn && bedPrefabs.Length > 0)
         {
             GameObject bedPrefab = bedPrefabs[Random.Range(0, bedPrefabs.Length)];
 
-            float halfWidth = room.width / 2f;
-            float halfLength = room.length / 2f;
+            float halfWidth = room.Width / 2f;
+            float halfLength = room.Length / 2f;
             float offset1 = 1.5f;
             float offset2 = 2f;
 

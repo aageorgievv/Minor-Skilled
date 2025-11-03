@@ -4,18 +4,17 @@ using UnityEngine;
 public abstract class DungeonRoom : MonoBehaviour
 {
     [Header("Room Shell")]
-    [SerializeField] protected GameObject[] wallPrefabs;
+    [SerializeField] protected GameObject unit1WallPrefab;
+    [SerializeField] protected GameObject unit2WallPrefab;
     [SerializeField] protected GameObject doorPrefab;
     [SerializeField] protected GameObject floorPrefab;
 
     [Header("Generation settings")]
-    [SerializeField, Min(1f)] public Vector2 size;
+    [SerializeField, Min(1f)] public Vector2Int size;
 
     protected const int maxPlacementIterations = 500;
-    protected List<Room> rooms = new List<Room>();
-    protected List<Door> doors = new List<Door>();
 
-    private Vector2 lastSize;
+    private Vector2Int lastSize;
     private LayerMask furnitureLayer;
 
     protected virtual void Start()
@@ -38,11 +37,7 @@ public abstract class DungeonRoom : MonoBehaviour
 
     public void StartGenerating()
     {
-        rooms.Clear();
-        doors.Clear();
-
-        Room currentRoom = new Room(Vector3.zero, size.x, size.y);
-        rooms.Add(currentRoom);
+        Room currentRoom = new Room(Vector3.zero, size);
 
         GenerateWalls(currentRoom);
         GenerateFloor(currentRoom);
@@ -51,52 +46,111 @@ public abstract class DungeonRoom : MonoBehaviour
 
     private void GenerateWalls(Room room)
     {
-        float maxStretch = 1.5f;
-        float wallSize = 4f;
+        /*        float maxStretch = 1.5f;
+                float wallSize = 4f;*/
 
-        float halfWidth = room.width / 2f;
-        float halfLength = room.length / 2f;
+        float halfWidth = room.Width / 2f;
+        float halfLength = room.Length / 2f;
+        int offset = 1;
 
         //Bottom
-        GenerateWallLine(new Vector3(room.center.x - halfWidth, 0, room.center.z - halfLength), Vector3.right, 0, room.width, maxStretch, wallSize);
+        GenerateWallLine(room, new Vector3(room.center.x - halfWidth + offset, 0, room.center.z - halfLength), Vector3.right, 0, size.x);
         //Top
-        GenerateWallLine(new Vector3(room.center.x - halfWidth, 0, room.center.z + halfLength), Vector3.right, 0, room.width, maxStretch, wallSize);
+        GenerateWallLine(room, new Vector3(room.center.x - halfWidth + offset, 0, room.center.z + halfLength), Vector3.right, 0, size.x);
         //Left
-        GenerateWallLine(new Vector3(room.center.x - halfWidth, 0, room.center.z - halfLength), Vector3.forward, 90, room.length, maxStretch, wallSize);
+        GenerateWallLine(room, new Vector3(room.center.x - halfWidth, 0, room.center.z - halfLength - offset), Vector3.forward, 90, size.y);
         //Right
-        GenerateWallLine(new Vector3(room.center.x + halfWidth, 0, room.center.z - halfLength), Vector3.forward, 90, room.length, maxStretch, wallSize);
+        GenerateWallLine(room, new Vector3(room.center.x + halfWidth, 0, room.center.z - halfLength - offset), Vector3.forward, 90, size.y);
     }
 
-    private void GenerateWallLine(Vector3 startPos, Vector3 dir, int angle, float totalLength, float maxStretch, float wallSize)
-    {
-        float placed = 0f;
-        while (placed < totalLength)
+
+    //Stretching method
+
+    /*    private void GenerateWallLine(Vector3 startPos, Vector3 dir, int angle, float totalLength, float maxStretch, float wallSize)
         {
-            float remaining = totalLength - placed;
-            float maxCover = wallSize * maxStretch;
-            float cover = Mathf.Min(remaining, maxCover);
-            float scale = cover / wallSize;
+            float placed = 0f;
+            while (placed < totalLength)
+            {
+                float remaining = totalLength - placed;
+                float maxCover = wallSize * maxStretch;
+                float cover = Mathf.Min(remaining, maxCover);
+                float scale = cover / wallSize;
 
-            GameObject wallPrefab = wallPrefabs[Random.Range(0, wallPrefabs.Length)];
-            GameObject wall = Instantiate(wallPrefab, transform);
-            wall.transform.localPosition = startPos + dir * (placed + cover / 2);
-            wall.transform.rotation = Quaternion.Euler(0f, angle, 0f);
-            wall.transform.localScale = new Vector3(scale, 1f, 1f);
+                GameObject wallPrefab = wallPrefabs[Random.Range(0, wallPrefabs.Length)];
+                GameObject wall = Instantiate(wallPrefab, transform);
+                wall.transform.localPosition = startPos + dir * (placed + cover / 2);
+                wall.transform.rotation = Quaternion.Euler(0f, angle, 0f);
+                wall.transform.localScale = new Vector3(scale, 1f, 1f);
 
-            placed += cover;
+                placed += cover;
+            }
+        }*/
+
+
+    // 2UnitWall Method
+
+    const int minimumFreeSpaces = 6;
+
+    private void GenerateWallLine(Room room, Vector3 startPos, Vector3 dir, int angle, int totalLength)
+    {
+        int placedUnits = 0;
+
+        if (unit2WallPrefab == null)
+        {
+            Debug.LogError("Missing wallPrefab1Unit! Cannot generate walls.");
+            return;
         }
+
+        bool use2Unit = unit2WallPrefab != null;
+
+        while (placedUnits < totalLength)
+        {
+            int remaining = totalLength - placedUnits;
+            int wallUnitSize = 2;
+            float wallCenterOffset = wallUnitSize / 2f;
+            Vector3 spawnPosition = startPos + dir * (placedUnits + wallCenterOffset);
+
+            int gridX = Mathf.FloorToInt(spawnPosition.x);
+            int gridZ = Mathf.FloorToInt(spawnPosition.z);
+
+            if (room.FreeSpaces <= minimumFreeSpaces)
+            {
+                break;
+            }
+
+            if (room.IsOccupied(gridX, gridZ))
+            {
+                // this position in the room is occupied
+                continue;
+            }
+
+            GameObject wall = Instantiate(unit2WallPrefab, transform);
+
+            wall.transform.localPosition = spawnPosition;
+            wall.transform.localRotation = Quaternion.Euler(0f, angle, 0f);
+
+
+            room.Occupy(gridX, gridZ);
+
+
+
+            placedUnits += wallUnitSize;
+        }
+
+
+
     }
 
     private void GenerateFloor(Room room)
     {
         GameObject floor = Instantiate(floorPrefab, transform);
         floor.transform.localPosition = room.center;
-        floor.transform.localScale = new Vector3(room.width, 0.1f, room.length);
+        floor.transform.localScale = new Vector3(room.Width, 0.1f, room.Length);
     }
 
     protected bool TryPlaceObject(GameObject prefab, Vector3 localPosition, Quaternion localRotation)
     {
-        if(prefab == null)
+        if (prefab == null)
         {
             Debug.LogError($"The prefab: {nameof(prefab)} is null");
             return false;
@@ -113,7 +167,7 @@ public abstract class DungeonRoom : MonoBehaviour
         Vector3 worldPosition = transform.TransformPoint(localPosition);
         Quaternion worldRotation = transform.rotation * localRotation;
 
-        if(IsSpaceFree(worldPosition, collider.size * 0.5f, worldRotation, furnitureLayer))
+        if (IsSpaceFree(worldPosition, collider.size * 0.5f, worldRotation, furnitureLayer))
         {
             GameObject newObject = Instantiate(prefab, transform);
             newObject.transform.localPosition = localPosition;

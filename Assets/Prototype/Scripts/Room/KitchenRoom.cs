@@ -31,11 +31,11 @@ public class KitchenRoom : DungeonRoom
             return;
         }
 
-        if (room.width >= barSizeSpawn && room.length >= barSizeSpawn && barPresetPrefab != null)
+        if (room.Width >= barSizeSpawn && room.Length >= barSizeSpawn && barPresetPrefab != null)
         {
             int side = Random.Range(0, 4);
-            float halfWidth = room.width / 2f;
-            float halfLength = room.length / 2f;
+            float halfWidth = room.Width / 2f;
+            float halfLength = room.Length / 2f;
             Vector3 barPosition = Vector3.zero;
             Quaternion barRotation = Quaternion.identity;
 
@@ -75,11 +75,11 @@ public class KitchenRoom : DungeonRoom
             return;
         }
 
-        if (room.width >= tableSizeSpawn && room.length >= tableSizeSpawn && longTablePrefabs.Length > 0 && chairPrefab != null)
+        if (room.Width >= tableSizeSpawn && room.Length >= tableSizeSpawn && longTablePrefabs.Length > 0 && chairPrefab != null)
         {
             float offset = Random.Range(2, 5);
-            float halfWidth = room.width / 2f;
-            float halfLength = room.length / 2f;
+            float halfWidth = room.Width / 2f;
+            float halfLength = room.Length / 2f;
             int tableSpawnAmount = Random.Range(0, longTablePrefabs.Length * 2);
 
             for (int i = 0; i < tableSpawnAmount; i++)
@@ -122,10 +122,10 @@ public class KitchenRoom : DungeonRoom
 
     private void GenerateBarrels(Room room)
     {
-        if (room.width >= BarrelSizeSpawn && room.length != BarrelSizeSpawn && barrelPrefabs != null)
+        if (room.Width >= BarrelSizeSpawn && room.Length != BarrelSizeSpawn && barrelPrefabs != null)
         {
-            float halfWidth = room.width / 2f;
-            float halfLength = room.length / 2f;
+            float halfWidth = room.Width / 2f;
+            float halfLength = room.Length / 2f;
             float offset = 1.5f;
             int barrelSpawnAmount = Random.Range(0, this.barrelSpawnAmount + 1);
 

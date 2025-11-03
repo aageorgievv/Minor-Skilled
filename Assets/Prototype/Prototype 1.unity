@@ -699,13 +699,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 82c676603b09c33468d561eed7d0c991, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  wallPrefabs:
-  - {fileID: 919132149155446097, guid: 25cf937b7c6cadf4fa613c6d4454de5a, type: 3}
-  - {fileID: 919132149155446097, guid: d342571d08926a84d99ae05004ff39cc, type: 3}
-  - {fileID: 919132149155446097, guid: 5075d87ee832ffc41af41b26c84e7ddb, type: 3}
+  unit1WallPrefab: {fileID: 0}
+  unit2WallPrefab: {fileID: 0}
   doorPrefab: {fileID: 0}
   floorPrefab: {fileID: 3068211032169242613, guid: 1c59ea643dcbd0e4e8288239c3eefb6e, type: 3}
-  size: {x: 24, y: 20}
+  size: {x: 0, y: 0}
   barPresetPrefab: {fileID: 3911629406946552416, guid: c9ed8781044505d489b73fdfb0c14ee0, type: 3}
   barrelPrefabs:
   - {fileID: 9089401514291895931, guid: 589e7f56b1ff39b4f999ff40d2e7381b, type: 3}
@@ -6764,15 +6762,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 09e4c0257036885408cd2fd582307c60, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  wallPrefabs:
-  - {fileID: 919132149155446097, guid: 25cf937b7c6cadf4fa613c6d4454de5a, type: 3}
-  - {fileID: 919132149155446097, guid: d342571d08926a84d99ae05004ff39cc, type: 3}
-  - {fileID: 919132149155446097, guid: e057e8ab36593de4c9e900f6f594587b, type: 3}
-  - {fileID: 919132149155446097, guid: 77652e85be75e51499296ab6d52142a3, type: 3}
-  - {fileID: 919132149155446097, guid: 5075d87ee832ffc41af41b26c84e7ddb, type: 3}
+  unit1WallPrefab: {fileID: 0}
+  unit2WallPrefab: {fileID: 0}
   doorPrefab: {fileID: 0}
   floorPrefab: {fileID: 3068211032169242613, guid: 1c59ea643dcbd0e4e8288239c3eefb6e, type: 3}
-  size: {x: 12, y: 16}
+  size: {x: 0, y: 0}
   tablePrefabs: []
   bedPrefabs:
   - {fileID: 3510615712679776044, guid: 1c217bc5c86793743b8d470702a8d27d, type: 3}
@@ -12206,13 +12200,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 82c676603b09c33468d561eed7d0c991, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  wallPrefabs:
-  - {fileID: 919132149155446097, guid: 25cf937b7c6cadf4fa613c6d4454de5a, type: 3}
-  - {fileID: 919132149155446097, guid: d342571d08926a84d99ae05004ff39cc, type: 3}
-  - {fileID: 919132149155446097, guid: 5075d87ee832ffc41af41b26c84e7ddb, type: 3}
+  unit1WallPrefab: {fileID: 0}
+  unit2WallPrefab: {fileID: 0}
   doorPrefab: {fileID: 0}
   floorPrefab: {fileID: 3068211032169242613, guid: 1c59ea643dcbd0e4e8288239c3eefb6e, type: 3}
-  size: {x: 12, y: 20}
+  size: {x: 0, y: 0}
   barPresetPrefab: {fileID: 3911629406946552416, guid: c9ed8781044505d489b73fdfb0c14ee0, type: 3}
   barrelPrefabs:
   - {fileID: 9089401514291895931, guid: 589e7f56b1ff39b4f999ff40d2e7381b, type: 3}
@@ -16377,15 +16369,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 09e4c0257036885408cd2fd582307c60, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  wallPrefabs:
-  - {fileID: 919132149155446097, guid: 25cf937b7c6cadf4fa613c6d4454de5a, type: 3}
-  - {fileID: 919132149155446097, guid: d342571d08926a84d99ae05004ff39cc, type: 3}
-  - {fileID: 919132149155446097, guid: e057e8ab36593de4c9e900f6f594587b, type: 3}
-  - {fileID: 919132149155446097, guid: 77652e85be75e51499296ab6d52142a3, type: 3}
-  - {fileID: 919132149155446097, guid: 5075d87ee832ffc41af41b26c84e7ddb, type: 3}
+  unit1WallPrefab: {fileID: 0}
+  unit2WallPrefab: {fileID: 0}
   doorPrefab: {fileID: 0}
   floorPrefab: {fileID: 3068211032169242613, guid: 1c59ea643dcbd0e4e8288239c3eefb6e, type: 3}
-  size: {x: 12, y: 12}
+  size: {x: 0, y: 0}
   tablePrefabs: []
   bedPrefabs:
   - {fileID: 3510615712679776044, guid: 1c217bc5c86793743b8d470702a8d27d, type: 3}
@@ -17048,15 +17036,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 09e4c0257036885408cd2fd582307c60, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  wallPrefabs:
-  - {fileID: 919132149155446097, guid: 25cf937b7c6cadf4fa613c6d4454de5a, type: 3}
-  - {fileID: 919132149155446097, guid: d342571d08926a84d99ae05004ff39cc, type: 3}
-  - {fileID: 919132149155446097, guid: e057e8ab36593de4c9e900f6f594587b, type: 3}
-  - {fileID: 919132149155446097, guid: 77652e85be75e51499296ab6d52142a3, type: 3}
-  - {fileID: 919132149155446097, guid: 5075d87ee832ffc41af41b26c84e7ddb, type: 3}
+  unit1WallPrefab: {fileID: 0}
+  unit2WallPrefab: {fileID: 0}
   doorPrefab: {fileID: 0}
   floorPrefab: {fileID: 3068211032169242613, guid: 1c59ea643dcbd0e4e8288239c3eefb6e, type: 3}
-  size: {x: 24, y: 12}
+  size: {x: 0, y: 0}
   tablePrefabs: []
   bedPrefabs:
   - {fileID: 3510615712679776044, guid: 1c217bc5c86793743b8d470702a8d27d, type: 3}
@@ -17369,13 +17353,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 82c676603b09c33468d561eed7d0c991, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  wallPrefabs:
-  - {fileID: 919132149155446097, guid: 25cf937b7c6cadf4fa613c6d4454de5a, type: 3}
-  - {fileID: 919132149155446097, guid: d342571d08926a84d99ae05004ff39cc, type: 3}
-  - {fileID: 919132149155446097, guid: 5075d87ee832ffc41af41b26c84e7ddb, type: 3}
+  unit1WallPrefab: {fileID: 0}
+  unit2WallPrefab: {fileID: 0}
   doorPrefab: {fileID: 0}
   floorPrefab: {fileID: 3068211032169242613, guid: 1c59ea643dcbd0e4e8288239c3eefb6e, type: 3}
-  size: {x: 12, y: 16}
+  size: {x: 0, y: 0}
   barPresetPrefab: {fileID: 3911629406946552416, guid: c9ed8781044505d489b73fdfb0c14ee0, type: 3}
   barrelPrefabs:
   - {fileID: 9089401514291895931, guid: 589e7f56b1ff39b4f999ff40d2e7381b, type: 3}
@@ -22761,15 +22743,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 09e4c0257036885408cd2fd582307c60, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  wallPrefabs:
-  - {fileID: 919132149155446097, guid: 25cf937b7c6cadf4fa613c6d4454de5a, type: 3}
-  - {fileID: 919132149155446097, guid: d342571d08926a84d99ae05004ff39cc, type: 3}
-  - {fileID: 919132149155446097, guid: e057e8ab36593de4c9e900f6f594587b, type: 3}
-  - {fileID: 919132149155446097, guid: 77652e85be75e51499296ab6d52142a3, type: 3}
-  - {fileID: 919132149155446097, guid: 5075d87ee832ffc41af41b26c84e7ddb, type: 3}
+  unit1WallPrefab: {fileID: 0}
+  unit2WallPrefab: {fileID: 0}
   doorPrefab: {fileID: 0}
   floorPrefab: {fileID: 3068211032169242613, guid: 1c59ea643dcbd0e4e8288239c3eefb6e, type: 3}
-  size: {x: 16, y: 16}
+  size: {x: 0, y: 0}
   tablePrefabs: []
   bedPrefabs:
   - {fileID: 3510615712679776044, guid: 1c217bc5c86793743b8d470702a8d27d, type: 3}
@@ -23824,13 +23802,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 82c676603b09c33468d561eed7d0c991, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  wallPrefabs:
-  - {fileID: 919132149155446097, guid: 25cf937b7c6cadf4fa613c6d4454de5a, type: 3}
-  - {fileID: 919132149155446097, guid: d342571d08926a84d99ae05004ff39cc, type: 3}
-  - {fileID: 919132149155446097, guid: 5075d87ee832ffc41af41b26c84e7ddb, type: 3}
+  unit1WallPrefab: {fileID: 0}
+  unit2WallPrefab: {fileID: 0}
   doorPrefab: {fileID: 0}
   floorPrefab: {fileID: 3068211032169242613, guid: 1c59ea643dcbd0e4e8288239c3eefb6e, type: 3}
-  size: {x: 12, y: 16}
+  size: {x: 0, y: 0}
   barPresetPrefab: {fileID: 3911629406946552416, guid: c9ed8781044505d489b73fdfb0c14ee0, type: 3}
   barrelPrefabs:
   - {fileID: 9089401514291895931, guid: 589e7f56b1ff39b4f999ff40d2e7381b, type: 3}
@@ -25816,15 +25792,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 09e4c0257036885408cd2fd582307c60, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  wallPrefabs:
-  - {fileID: 919132149155446097, guid: 25cf937b7c6cadf4fa613c6d4454de5a, type: 3}
-  - {fileID: 919132149155446097, guid: d342571d08926a84d99ae05004ff39cc, type: 3}
-  - {fileID: 919132149155446097, guid: e057e8ab36593de4c9e900f6f594587b, type: 3}
-  - {fileID: 919132149155446097, guid: 77652e85be75e51499296ab6d52142a3, type: 3}
-  - {fileID: 919132149155446097, guid: 5075d87ee832ffc41af41b26c84e7ddb, type: 3}
+  unit1WallPrefab: {fileID: 0}
+  unit2WallPrefab: {fileID: 0}
   doorPrefab: {fileID: 0}
   floorPrefab: {fileID: 3068211032169242613, guid: 1c59ea643dcbd0e4e8288239c3eefb6e, type: 3}
-  size: {x: 12, y: 16}
+  size: {x: 0, y: 0}
   tablePrefabs: []
   bedPrefabs:
   - {fileID: 3510615712679776044, guid: 1c217bc5c86793743b8d470702a8d27d, type: 3}
@@ -26264,15 +26236,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 09e4c0257036885408cd2fd582307c60, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  wallPrefabs:
-  - {fileID: 919132149155446097, guid: 25cf937b7c6cadf4fa613c6d4454de5a, type: 3}
-  - {fileID: 919132149155446097, guid: d342571d08926a84d99ae05004ff39cc, type: 3}
-  - {fileID: 919132149155446097, guid: e057e8ab36593de4c9e900f6f594587b, type: 3}
-  - {fileID: 919132149155446097, guid: 77652e85be75e51499296ab6d52142a3, type: 3}
-  - {fileID: 919132149155446097, guid: 5075d87ee832ffc41af41b26c84e7ddb, type: 3}
+  unit1WallPrefab: {fileID: 0}
+  unit2WallPrefab: {fileID: 0}
   doorPrefab: {fileID: 0}
   floorPrefab: {fileID: 3068211032169242613, guid: 1c59ea643dcbd0e4e8288239c3eefb6e, type: 3}
-  size: {x: 24, y: 16}
+  size: {x: 0, y: 0}
   tablePrefabs: []
   bedPrefabs:
   - {fileID: 3510615712679776044, guid: 1c217bc5c86793743b8d470702a8d27d, type: 3}
@@ -27607,7 +27575,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1367426404
 Transform:
   m_ObjectHideFlags: 0
@@ -35284,15 +35252,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 09e4c0257036885408cd2fd582307c60, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  wallPrefabs:
-  - {fileID: 919132149155446097, guid: 25cf937b7c6cadf4fa613c6d4454de5a, type: 3}
-  - {fileID: 919132149155446097, guid: d342571d08926a84d99ae05004ff39cc, type: 3}
-  - {fileID: 919132149155446097, guid: e057e8ab36593de4c9e900f6f594587b, type: 3}
-  - {fileID: 919132149155446097, guid: 77652e85be75e51499296ab6d52142a3, type: 3}
-  - {fileID: 919132149155446097, guid: 5075d87ee832ffc41af41b26c84e7ddb, type: 3}
+  unit1WallPrefab: {fileID: 0}
+  unit2WallPrefab: {fileID: 0}
   doorPrefab: {fileID: 0}
   floorPrefab: {fileID: 3068211032169242613, guid: 1c59ea643dcbd0e4e8288239c3eefb6e, type: 3}
-  size: {x: 12, y: 20}
+  size: {x: 0, y: 0}
   tablePrefabs: []
   bedPrefabs:
   - {fileID: 3510615712679776044, guid: 1c217bc5c86793743b8d470702a8d27d, type: 3}
@@ -35679,15 +35643,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 09e4c0257036885408cd2fd582307c60, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  wallPrefabs:
-  - {fileID: 919132149155446097, guid: 25cf937b7c6cadf4fa613c6d4454de5a, type: 3}
-  - {fileID: 919132149155446097, guid: d342571d08926a84d99ae05004ff39cc, type: 3}
-  - {fileID: 919132149155446097, guid: e057e8ab36593de4c9e900f6f594587b, type: 3}
-  - {fileID: 919132149155446097, guid: 77652e85be75e51499296ab6d52142a3, type: 3}
-  - {fileID: 919132149155446097, guid: 5075d87ee832ffc41af41b26c84e7ddb, type: 3}
+  unit1WallPrefab: {fileID: 0}
+  unit2WallPrefab: {fileID: 0}
   doorPrefab: {fileID: 0}
   floorPrefab: {fileID: 3068211032169242613, guid: 1c59ea643dcbd0e4e8288239c3eefb6e, type: 3}
-  size: {x: 16, y: 20}
+  size: {x: 0, y: 0}
   tablePrefabs: []
   bedPrefabs:
   - {fileID: 3510615712679776044, guid: 1c217bc5c86793743b8d470702a8d27d, type: 3}
@@ -38828,15 +38788,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 09e4c0257036885408cd2fd582307c60, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  wallPrefabs:
-  - {fileID: 919132149155446097, guid: 25cf937b7c6cadf4fa613c6d4454de5a, type: 3}
-  - {fileID: 919132149155446097, guid: d342571d08926a84d99ae05004ff39cc, type: 3}
-  - {fileID: 919132149155446097, guid: e057e8ab36593de4c9e900f6f594587b, type: 3}
-  - {fileID: 919132149155446097, guid: 77652e85be75e51499296ab6d52142a3, type: 3}
-  - {fileID: 919132149155446097, guid: 5075d87ee832ffc41af41b26c84e7ddb, type: 3}
+  unit1WallPrefab: {fileID: 0}
+  unit2WallPrefab: {fileID: 0}
   doorPrefab: {fileID: 0}
   floorPrefab: {fileID: 3068211032169242613, guid: 1c59ea643dcbd0e4e8288239c3eefb6e, type: 3}
-  size: {x: 16, y: 12}
+  size: {x: 0, y: 0}
   tablePrefabs: []
   bedPrefabs:
   - {fileID: 3510615712679776044, guid: 1c217bc5c86793743b8d470702a8d27d, type: 3}
@@ -39577,15 +39533,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 09e4c0257036885408cd2fd582307c60, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  wallPrefabs:
-  - {fileID: 919132149155446097, guid: 25cf937b7c6cadf4fa613c6d4454de5a, type: 3}
-  - {fileID: 919132149155446097, guid: d342571d08926a84d99ae05004ff39cc, type: 3}
-  - {fileID: 919132149155446097, guid: e057e8ab36593de4c9e900f6f594587b, type: 3}
-  - {fileID: 919132149155446097, guid: 77652e85be75e51499296ab6d52142a3, type: 3}
-  - {fileID: 919132149155446097, guid: 5075d87ee832ffc41af41b26c84e7ddb, type: 3}
+  unit1WallPrefab: {fileID: 0}
+  unit2WallPrefab: {fileID: 0}
   doorPrefab: {fileID: 0}
   floorPrefab: {fileID: 3068211032169242613, guid: 1c59ea643dcbd0e4e8288239c3eefb6e, type: 3}
-  size: {x: 24, y: 16}
+  size: {x: 0, y: 0}
   tablePrefabs: []
   bedPrefabs:
   - {fileID: 3510615712679776044, guid: 1c217bc5c86793743b8d470702a8d27d, type: 3}
@@ -46464,9 +46416,25 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 1688757068730732720, guid: b5e9a0569285e134587a068caa5a559d, type: 3}
+      propertyPath: unit1WallPrefab
+      value: 
+      objectReference: {fileID: 9131080604107295868, guid: 9e15cc98a70fb4b458bc323ae1b182ff, type: 3}
+    - target: {fileID: 1688757068730732720, guid: b5e9a0569285e134587a068caa5a559d, type: 3}
+      propertyPath: unit2WallPrefab
+      value: 
+      objectReference: {fileID: 5080222379709689336, guid: aeea087553cb844488a004aadeccfd45, type: 3}
+    - target: {fileID: 1688757068730732720, guid: b5e9a0569285e134587a068caa5a559d, type: 3}
+      propertyPath: wallPrefabs.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1688757068730732720, guid: b5e9a0569285e134587a068caa5a559d, type: 3}
       propertyPath: tablePrefabs.Array.size
       value: 4
       objectReference: {fileID: 0}
+    - target: {fileID: 1688757068730732720, guid: b5e9a0569285e134587a068caa5a559d, type: 3}
+      propertyPath: 'wallPrefabs.Array.data[0]'
+      value: 
+      objectReference: {fileID: 919132149155446097, guid: 257267ecfd7b129479e2fccf4e705b95, type: 3}
     - target: {fileID: 1688757068730732720, guid: b5e9a0569285e134587a068caa5a559d, type: 3}
       propertyPath: 'tablePrefabs.Array.data[0]'
       value: 
@@ -46489,7 +46457,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6266124836317640372, guid: b5e9a0569285e134587a068caa5a559d, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6674789288354106939, guid: b5e9a0569285e134587a068caa5a559d, type: 3}
       propertyPath: m_LocalPosition.x

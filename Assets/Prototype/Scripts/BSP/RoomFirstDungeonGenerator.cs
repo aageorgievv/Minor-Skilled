@@ -54,7 +54,7 @@ public class RoomFirstDungeonGenerator : AbstractDungeonGenerator
         DungeonRoom randomRoomPrefab = roomPrefabs[UnityEngine.Random.Range(0, roomPrefabs.Length)];
 
         DungeonRoom newRoom = Instantiate(randomRoomPrefab, worldCenter, Quaternion.identity, transform);
-        newRoom.size = roomSize;
+        //newRoom.size = roomSize; //no longer setting the size with the 1/2 unit change
         newRoom.StartGenerating();
     }
 }
