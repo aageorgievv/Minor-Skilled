@@ -39,7 +39,7 @@ public class Room
     {
         if (!IsValidGridPosition(x, y))
         {
-            return false;
+            return true;
         }
 
 
@@ -53,12 +53,12 @@ public class Room
             return false;
         }
 
-        if (x > size.x)
+        if (x >= size.x)
         {
             return false;
         }
 
-        if (y > size.y)
+        if (y >= size.y)
         {
             return false;
         }

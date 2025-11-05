@@ -9,6 +9,10 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 8499363158475282118, guid: 9e15cc98a70fb4b458bc323ae1b182ff, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8499363158475282118, guid: 9e15cc98a70fb4b458bc323ae1b182ff, type: 3}
       propertyPath: m_LocalPosition.x
       value: -0.7859554
       objectReference: {fileID: 0}
@@ -50,7 +54,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9131080604107295868, guid: 9e15cc98a70fb4b458bc323ae1b182ff, type: 3}
       propertyPath: m_Name
-      value: wall_half (2) Variant
+      value: 2UnitWall
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
