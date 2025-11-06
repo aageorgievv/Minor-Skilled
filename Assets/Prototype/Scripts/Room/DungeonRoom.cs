@@ -92,9 +92,6 @@ public abstract class DungeonRoom : MonoBehaviour
 
 
     // 1UnitWall Method
-
-    const int minimumFreeSpaces = 6;
-
     private void GenerateWallLine(Room room, Vector3 startPos, Vector3 dir, int angle, int totalLength)
     {
         int placedUnits = 0;
@@ -111,20 +108,6 @@ public abstract class DungeonRoom : MonoBehaviour
             int wallUnitSize = 1;
             float wallCenterOffset = wallUnitSize / 2f;
             Vector3 spawnPosition = startPos + dir * (placedUnits + wallCenterOffset);
-
-/*            int gridX = Mathf.FloorToInt(spawnPosition.x);
-            int gridZ = Mathf.FloorToInt(spawnPosition.z);
-
-            if (room.FreeSpaces <= minimumFreeSpaces)
-            {
-                break;
-            }
-
-            if (room.IsOccupied(gridX, gridZ))
-            {
-                // this position in the room is occupied
-                continue;
-            }*/
 
             GameObject wall = Instantiate(unit1WallPrefab, transform);
             wall.transform.localPosition = spawnPosition;
@@ -175,8 +158,6 @@ public abstract class DungeonRoom : MonoBehaviour
         return false;
     }
 
-    protected abstract void GenerateInterior(Room room);
-
     private bool IsSpaceFree(Vector3 worldPosition, Vector3 halfExtents, Quaternion worldRotation, LayerMask layerMask)
     {
         Collider[] hits = Physics.OverlapBox(worldPosition, halfExtents, worldRotation, layerMask);
@@ -214,5 +195,61 @@ public abstract class DungeonRoom : MonoBehaviour
                 Gizmos.DrawCube(cellCenterWorld, gizmoCellSize);
             }
         }
+    }
+    protected abstract void GenerateInterior(Room room);
+
+    protected bool TryPlaceObjectOnGrid(Room room, GameObject prefab, Vector2Int objectGridSize, Vector2Int gridPosition, Quaternion localRotation, Vector3 pivotOffset)
+    {
+        Vector2Int rotatedSize = GetRotatedSize(objectGridSize, localRotation);
+        List<Vector2Int> cellsToOccupy = new List<Vector2Int>();
+
+        for (int x = 0; x < rotatedSize.x; x++)
+        {
+            for (int y = 0; y < rotatedSize.y; y++)
+            {
+                Vector2Int cell = new Vector2Int(gridPosition.x + x, gridPosition.y + y);
+
+                if(room.IsOccupied(cell.x, cell.y))
+                {
+                    return false;
+                }
+
+                cellsToOccupy.Add(cell);
+            }
+        }
+
+        foreach(Vector2Int cell in cellsToOccupy)
+        {
+            room.Occupy(cell.x, cell.y);
+        }
+
+        Vector3 origin = GetGridOrigin();
+        Vector3 anchorCornerPos = origin + new Vector3(gridPosition.x, 0, gridPosition.y);
+        Vector3 objectCenterOffset = new Vector3(rotatedSize.x * 0.5f, 0, rotatedSize.y * 0.5f);
+        Vector3 spawnPositionLocal = anchorCornerPos + objectCenterOffset;
+        Vector3 finalSpawnPosition = spawnPositionLocal + (localRotation * pivotOffset);
+
+        GameObject newObject = Instantiate(prefab, transform);
+        newObject.transform.localPosition = finalSpawnPosition;
+        newObject.transform.localRotation = localRotation;
+
+        return true;
+    }
+
+    protected Vector3 GetGridOrigin()
+    {
+        return new Vector3(-room.Width / 2f, 0, -room.Length / 2f);
+    }
+
+    protected Vector2Int GetRotatedSize(Vector2Int size, Quaternion rotation)
+    {
+        float yAngle = Mathf.Round(rotation.eulerAngles.y);
+
+        if (Mathf.Approximately(yAngle, 90f) || Mathf.Approximately(yAngle, 270f))
+        {
+            return new Vector2Int(size.y, size.x);
+        }
+
+        return size;
     }
 }

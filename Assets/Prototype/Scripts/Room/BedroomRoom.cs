@@ -20,9 +20,9 @@ public class BedroomRoom : DungeonRoom
 
     protected override void GenerateInterior(Room room)
     {
-/*        GenerateTableAndChairs(room, 0);
+        //GenerateTableAndChairs(room, 0);
         GenerateBeds(room, 0);
-        GenerateChest(room);*/
+        //GenerateChest(room);
     }
 
     private void GenerateTableAndChairs(Room room, int iteration)
@@ -123,6 +123,58 @@ public class BedroomRoom : DungeonRoom
     {
         if (iteration > maxPlacementIterations)
         {
+            return;
+        }
+
+        if (room.Width >= bedSizeSpawn && room.Length != bedSizeSpawn && bedPrefabs.Length > 0)
+        {
+            GameObject bedPrefab = bedPrefabs[Random.Range(0, bedPrefabs.Length)];
+
+            int corner = Random.Range(0, 4);
+            Vector2Int bedGridSize = new Vector2Int(3, 3);
+            Vector2Int gridPos = Vector2Int.zero;
+            Quaternion bedRotation = Quaternion.identity;
+            Vector3 bedPivotOffset = new Vector3(0.5f, 0, 0);
+
+            Vector2Int rotatedSize_TR = GetRotatedSize(bedGridSize, Quaternion.Euler(0, -90, 0)); 
+            Vector2Int rotatedSize_TL = GetRotatedSize(bedGridSize, Quaternion.Euler(0, 180, 0)); 
+
+            switch (corner)
+            {
+                case 0: // bottom left
+                    gridPos = new Vector2Int(0, 0);
+                    bedRotation = Quaternion.Euler(0, 90, 0);
+                    break;
+
+                case 1: // bottom right
+                    gridPos = new Vector2Int(size.x - bedGridSize.x, 0);
+                    bedRotation = Quaternion.Euler(0, 0, 0);
+                    break;
+
+                case 2: // top left
+                    gridPos = new Vector2Int(0, size.y - rotatedSize_TL.y);
+                    bedRotation = Quaternion.Euler(0, 180, 0);
+                    break;
+
+                case 3: // top right
+                    gridPos = new Vector2Int(size.x - rotatedSize_TR.x, size.y - rotatedSize_TR.y);
+                    bedRotation = Quaternion.Euler(0, -90, 0);
+                    break;
+            }
+
+
+            if (!TryPlaceObjectOnGrid(room, bedPrefab, bedGridSize, gridPos, bedRotation, bedPivotOffset))
+            {
+                GenerateBeds(room, ++iteration);
+            }
+        }
+    }
+
+    /*//Old Method
+    private void GenerateBeds(Room room, int iteration)
+    {
+        if (iteration > maxPlacementIterations)
+        {
 
             return;
         }
@@ -168,7 +220,7 @@ public class BedroomRoom : DungeonRoom
                 GenerateBeds(room, ++iteration);
             }
         }
-    }
+    }*/
 
     /*    //Debug
         public struct Placement
