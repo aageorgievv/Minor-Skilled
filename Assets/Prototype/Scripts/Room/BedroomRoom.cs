@@ -20,102 +20,107 @@ public class BedroomRoom : DungeonRoom
 
     protected override void GenerateInterior(Room room)
     {
-        //GenerateTableAndChairs(room, 0);
+        GenerateTableAndChairs(room, 0);
         GenerateBeds(room, 0);
-        //GenerateChest(room);
+        GenerateChests(room);
     }
+
+    /*    private void GenerateTableAndChairs(Room room, int iteration)
+        {
+            if (iteration > maxPlacementIterations)
+            {
+                Debug.LogError("Fail safe while generating table/chairs");
+                return;
+            }
+
+            if (room.Width >= tableSizeSpawn && room.Length >= tableSizeSpawn && tablePrefabs.Length > 0 && chairPrefab != null)
+            {
+                GameObject tablePrefab = tablePrefabs[Random.Range(0, tablePrefabs.Length)];
+
+                float offset = Random.Range(5, 10);
+                float halfWidth = room.Width / 2f;
+                float halfLength = room.Length / 2f;
+
+                float randomX = Random.Range(room.center.x - halfWidth + offset, room.center.x + halfWidth - offset);
+                float randomZ = Random.Range(room.center.z - halfLength + offset, room.center.z + halfLength - offset);
+                Vector3 randomPosition = new Vector3(randomX, 0, randomZ);
+
+                if (TryPlaceObject(tablePrefab, randomPosition, Quaternion.identity))
+                {
+                    float chairOffsetX = 1.5f;
+                    float chairOffsetZ = 0f;
+
+                    Vector3[] chairPositions =
+                    {
+                        randomPosition + new Vector3(chairOffsetX, 0, -chairOffsetZ),
+                        randomPosition + new Vector3(-chairOffsetX, 0, chairOffsetZ),
+                    };
+
+                    Quaternion[] chairOrientations =
+                    {
+                        Quaternion.Euler(0, 180, 0),
+                        Quaternion.Euler(0, 0, 0),
+                    };
+
+                    for (int i = 0; i < chairPositions.Length; i++)
+                    {
+                        TryPlaceObject(chairPrefab, chairPositions[i], chairOrientations[i]);
+                    }
+                }
+                else
+                {
+                    GenerateTableAndChairs(room, ++iteration);
+                }
+            }
+        }*/
 
     private void GenerateTableAndChairs(Room room, int iteration)
     {
         if (iteration > maxPlacementIterations)
         {
-            Debug.LogError("Fail safe while generating table/chairs");
+            Debug.LogError("Fail safe activated");
             return;
         }
 
-        if (room.Width >= tableSizeSpawn && room.Length >= tableSizeSpawn && tablePrefabs.Length > 0 && chairPrefab != null)
+        if (tablePrefabs.Length == 0)
         {
-            GameObject tablePrefab = tablePrefabs[Random.Range(0, tablePrefabs.Length)];
-
-            float offset = Random.Range(5, 10);
-            float halfWidth = room.Width / 2f;
-            float halfLength = room.Length / 2f;
-
-            float randomX = Random.Range(room.center.x - halfWidth + offset, room.center.x + halfWidth - offset);
-            float randomZ = Random.Range(room.center.z - halfLength + offset, room.center.z + halfLength - offset);
-            Vector3 randomPosition = new Vector3(randomX, 0, randomZ);
-
-            if (TryPlaceObject(tablePrefab, randomPosition, Quaternion.identity))
-            {
-                float chairOffsetX = 1.5f;
-                float chairOffsetZ = 0f;
-
-                Vector3[] chairPositions =
-                {
-                    randomPosition + new Vector3(chairOffsetX, 0, -chairOffsetZ),
-                    randomPosition + new Vector3(-chairOffsetX, 0, chairOffsetZ),
-                };
-
-                Quaternion[] chairOrientations =
-                {
-                    Quaternion.Euler(0, 180, 0),
-                    Quaternion.Euler(0, 0, 0),
-                };
-
-                for (int i = 0; i < chairPositions.Length; i++)
-                {
-                    TryPlaceObject(chairPrefab, chairPositions[i], chairOrientations[i]);
-                }
-            }
-            else
-            {
-                GenerateTableAndChairs(room, ++iteration);
-            }
+            Debug.LogError("table prefabs are missing!");
+            return;
         }
-    }
 
-    private void GenerateChest(Room room)
-    {
-        if (room.Width >= chestSizeSpawn && room.Length != chestSizeSpawn && emptyChestPrefab != null && treasureChestPrefab != null)
+        GameObject tablePrefab = tablePrefabs[Random.Range(0, tablePrefabs.Length)];
+
+        Vector2Int tableGridSize = new Vector2Int(3, 3);
+        Vector3 tablePivotOffset = Vector3.zero;
+        int padding = 1;
+
+        Vector2Int tableGridPos;
+        Quaternion tableRotation;
+
+        if (!TryPlaceObjectInCenterArea(room, tablePrefab, tableGridSize, tablePivotOffset, padding, out tableGridPos, out tableRotation))
         {
-            GameObject chestPrefab = Random.value < 0.5f ? emptyChestPrefab : treasureChestPrefab;
+            GenerateTableAndChairs(room, ++iteration);
+        }
+        else
+        {
+            Vector2Int chairGridSize = new Vector2Int(1, 1);
+            Vector3 chairPivotOffset = Vector3.zero;
+            Vector2Int rotatedTableSize = GetRotatedSize(tableGridSize, tableRotation);
 
-            float halfWidth = room.Width / 2f;
-            float halfLength = room.Length / 2f;
-            float offset = 1f;
-            int chestSpawnAmount = Random.Range(0, maxChestSpawnAmount + 1);
+            int midX = tableGridPos.x + rotatedTableSize.x / 2;
+            int midY = tableGridPos.y + rotatedTableSize.y / 2;
 
-            for (int i = 0; i < chestSpawnAmount; i++)
-            {
-                int wall = Random.Range(0, 4);
-                Vector3 chestPosition = Vector3.zero;
-                Quaternion chestRotation = Quaternion.identity;
+            Vector2Int bottomChairPos = new Vector2Int(midX, tableGridPos.y - 1);
+            TryPlaceObjectOnGrid(room, chairPrefab, chairGridSize, bottomChairPos, Quaternion.Euler(0, -90, 0), chairPivotOffset);
 
-                float randomX = Random.Range(room.center.x - halfWidth + offset, room.center.x + halfWidth - offset);
-                float randomZ = Random.Range(room.center.z - halfLength + offset, room.center.z + halfLength - offset);
+            Vector2Int topChairPos = new Vector2Int(midX, tableGridPos.y + rotatedTableSize.y);
+            TryPlaceObjectOnGrid(room, chairPrefab, chairGridSize, topChairPos, Quaternion.Euler(0, 90, 0), chairPivotOffset);
 
-                switch (wall)
-                {
-                    case 0: // Top wall
-                        chestPosition = new Vector3(randomX, 0, room.center.z + halfLength - offset);
-                        chestRotation = Quaternion.Euler(0, 180, 0);
-                        break;
-                    case 1: // Bottom wall
-                        chestPosition = new Vector3(randomX, 0, room.center.z - halfLength + offset);
-                        chestRotation = Quaternion.Euler(0, 0, 0);
-                        break;
-                    case 2: // Right wall
-                        chestPosition = new Vector3(room.center.x + halfWidth - offset, 0, randomZ);
-                        chestRotation = Quaternion.Euler(0, -90, 0);
-                        break;
-                    case 3: // Left wall
-                        chestPosition = new Vector3(room.center.x - halfWidth + offset, 0, randomZ);
-                        chestRotation = Quaternion.Euler(0, 90, 0);
-                        break;
-                }
+            Vector2Int leftChairPos = new Vector2Int(tableGridPos.x - 1, midY);
+            TryPlaceObjectOnGrid(room, chairPrefab, chairGridSize, leftChairPos, Quaternion.Euler(0, 0, 0), chairPivotOffset);
 
-                TryPlaceObject(chestPrefab, chestPosition, chestRotation);
-            }
+            Vector2Int rightChairPos = new Vector2Int(tableGridPos.x + rotatedTableSize.x, midY);
+            TryPlaceObjectOnGrid(room, chairPrefab, chairGridSize, rightChairPos, Quaternion.Euler(0, -180, 0), chairPivotOffset);
         }
     }
 
@@ -123,104 +128,44 @@ public class BedroomRoom : DungeonRoom
     {
         if (iteration > maxPlacementIterations)
         {
+            Debug.LogError("Fail safe activated");
             return;
         }
 
-        if (room.Width >= bedSizeSpawn && room.Length != bedSizeSpawn && bedPrefabs.Length > 0)
+        if (bedPrefabs.Length == 0)
         {
-            GameObject bedPrefab = bedPrefabs[Random.Range(0, bedPrefabs.Length)];
+            Debug.LogError("Bed prefabs are missing");
+            return;
+        }
 
-            int corner = Random.Range(0, 4);
-            Vector2Int bedGridSize = new Vector2Int(3, 3);
-            Vector2Int gridPos = Vector2Int.zero;
-            Quaternion bedRotation = Quaternion.identity;
-            Vector3 bedPivotOffset = new Vector3(0.5f, 0, 0);
+        GameObject bedPrefab = bedPrefabs[Random.Range(0, bedPrefabs.Length)];
+        Vector2Int bedGridSize = new Vector2Int(3, 3);
+        Vector3 bedPivotOffset = new Vector3(0.5f, 0, 0);
 
-            Vector2Int rotatedSize_TR = GetRotatedSize(bedGridSize, Quaternion.Euler(0, -90, 0)); 
-            Vector2Int rotatedSize_TL = GetRotatedSize(bedGridSize, Quaternion.Euler(0, 180, 0)); 
-
-            switch (corner)
-            {
-                case 0: // bottom left
-                    gridPos = new Vector2Int(0, 0);
-                    bedRotation = Quaternion.Euler(0, 90, 0);
-                    break;
-
-                case 1: // bottom right
-                    gridPos = new Vector2Int(size.x - bedGridSize.x, 0);
-                    bedRotation = Quaternion.Euler(0, 0, 0);
-                    break;
-
-                case 2: // top left
-                    gridPos = new Vector2Int(0, size.y - rotatedSize_TL.y);
-                    bedRotation = Quaternion.Euler(0, 180, 0);
-                    break;
-
-                case 3: // top right
-                    gridPos = new Vector2Int(size.x - rotatedSize_TR.x, size.y - rotatedSize_TR.y);
-                    bedRotation = Quaternion.Euler(0, -90, 0);
-                    break;
-            }
-
-
-            if (!TryPlaceObjectOnGrid(room, bedPrefab, bedGridSize, gridPos, bedRotation, bedPivotOffset))
-            {
-                GenerateBeds(room, ++iteration);
-            }
+        if (!TryPlaceObjectInCorner(room, bedPrefab, bedGridSize, bedPivotOffset))
+        {
+            GenerateBeds(room, ++iteration);
         }
     }
 
-    /*//Old Method
-    private void GenerateBeds(Room room, int iteration)
+    private void GenerateChests(Room room)
     {
-        if (iteration > maxPlacementIterations)
+        if (treasureChestPrefab == null || emptyChestPrefab == null)
         {
-
+            Debug.LogError("Treasure prefabs are missing");
             return;
         }
 
-        if (room.Width >= bedSizeSpawn && room.Length != bedSizeSpawn && bedPrefabs.Length > 0)
+        GameObject chestPrefab = Random.value < 0.5f ? emptyChestPrefab : treasureChestPrefab;
+        int chestSpawnAmount = Random.Range(0, maxChestSpawnAmount + 1);
+        Vector2Int chestGridSize = new Vector2Int(2, 2);
+        Vector3 chestPivotOffset = new Vector3(0, 0, -0.25f);
+
+        for (int i = 0; i < chestSpawnAmount; ++i)
         {
-            GameObject bedPrefab = bedPrefabs[Random.Range(0, bedPrefabs.Length)];
-
-            float halfWidth = room.Width / 2f;
-            float halfLength = room.Length / 2f;
-            float offset1 = 1.5f;
-            float offset2 = 2f;
-
-            int corner = Random.Range(0, 4);
-            Vector3 bedPosition = Vector3.zero;
-            Quaternion bedRotation = Quaternion.identity;
-
-            switch (corner)
-            {
-                case 0: // bottom-left
-                    bedPosition = new Vector3(room.center.x - halfWidth + offset2, 0, room.center.z - halfLength + offset1);
-                    bedRotation = Quaternion.Euler(0, 90, 0);
-                    break;
-
-                case 1: // bottom-right
-                    bedPosition = new Vector3(room.center.x + halfWidth - offset1, 0, room.center.z - halfLength + offset2);
-                    bedRotation = Quaternion.Euler(0, 0, 0);
-                    break;
-
-                case 2: // top-left
-                    bedPosition = new Vector3(room.center.x - halfWidth + offset1, 0, room.center.z + halfLength - offset2);
-                    bedRotation = Quaternion.Euler(0, 180, 0);
-                    break;
-
-                case 3: // top-right
-                    bedPosition = new Vector3(room.center.x + halfWidth - offset2, 0, room.center.z + halfLength - offset1);
-                    bedRotation = Quaternion.Euler(0, -90, 0);
-                    break;
-            }
-
-            if (!TryPlaceObject(bedPrefab, bedPosition, bedRotation))
-            {
-                GenerateBeds(room, ++iteration);
-            }
+            TryPlaceObjectAlongWall(room, chestPrefab, chestGridSize, chestPivotOffset, 0);
         }
-    }*/
+    }
 
     /*    //Debug
         public struct Placement

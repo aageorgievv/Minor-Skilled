@@ -18,12 +18,10 @@ public class KitchenRoom : DungeonRoom
 
     protected override void GenerateInterior(Room room)
     {
-        GenerateBar(room, 0);
-        GenerateTableAndChairs(room, 0);
-        GenerateBarrels(room);
+
     }
 
-    private void GenerateBar(Room room, int iteration)
+    /*private void GenerateBar(Room room, int iteration)
     {
         if (iteration > maxPlacementIterations)
         {
@@ -162,5 +160,5 @@ public class KitchenRoom : DungeonRoom
                 TryPlaceObject(barrelPrefab, barrelPosition, barrelRotation);
             }
         }
-    }
+    }*/
 }
