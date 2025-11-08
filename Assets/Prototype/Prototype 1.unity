@@ -1636,7 +1636,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   unit1WallPrefab: {fileID: 9131080604107295868, guid: 9e15cc98a70fb4b458bc323ae1b182ff, type: 3}
-  doorPrefab: {fileID: 0}
   floorPrefab: {fileID: 3068211032169242613, guid: 1c59ea643dcbd0e4e8288239c3eefb6e, type: 3}
   size: {x: 10, y: 10}
   tablePrefabs: []
@@ -1913,7 +1912,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   unit1WallPrefab: {fileID: 9131080604107295868, guid: 9e15cc98a70fb4b458bc323ae1b182ff, type: 3}
-  doorPrefab: {fileID: 0}
   floorPrefab: {fileID: 3068211032169242613, guid: 1c59ea643dcbd0e4e8288239c3eefb6e, type: 3}
   size: {x: 10, y: 10}
   tablePrefabs: []
@@ -3742,7 +3740,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   unit1WallPrefab: {fileID: 9131080604107295868, guid: 9e15cc98a70fb4b458bc323ae1b182ff, type: 3}
-  doorPrefab: {fileID: 0}
   floorPrefab: {fileID: 3068211032169242613, guid: 1c59ea643dcbd0e4e8288239c3eefb6e, type: 3}
   size: {x: 10, y: 10}
   tablePrefabs: []
@@ -8577,7 +8574,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   unit1WallPrefab: {fileID: 9131080604107295868, guid: 9e15cc98a70fb4b458bc323ae1b182ff, type: 3}
-  doorPrefab: {fileID: 0}
   floorPrefab: {fileID: 3068211032169242613, guid: 1c59ea643dcbd0e4e8288239c3eefb6e, type: 3}
   size: {x: 10, y: 10}
   tablePrefabs: []
@@ -12574,7 +12570,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   unit1WallPrefab: {fileID: 9131080604107295868, guid: 9e15cc98a70fb4b458bc323ae1b182ff, type: 3}
-  doorPrefab: {fileID: 0}
   floorPrefab: {fileID: 3068211032169242613, guid: 1c59ea643dcbd0e4e8288239c3eefb6e, type: 3}
   size: {x: 10, y: 10}
   tablePrefabs: []
@@ -13539,7 +13534,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   unit1WallPrefab: {fileID: 9131080604107295868, guid: 9e15cc98a70fb4b458bc323ae1b182ff, type: 3}
-  doorPrefab: {fileID: 0}
   floorPrefab: {fileID: 3068211032169242613, guid: 1c59ea643dcbd0e4e8288239c3eefb6e, type: 3}
   size: {x: 10, y: 10}
   tablePrefabs: []
@@ -18744,7 +18738,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   unit1WallPrefab: {fileID: 9131080604107295868, guid: 9e15cc98a70fb4b458bc323ae1b182ff, type: 3}
-  doorPrefab: {fileID: 0}
   floorPrefab: {fileID: 3068211032169242613, guid: 1c59ea643dcbd0e4e8288239c3eefb6e, type: 3}
   size: {x: 10, y: 10}
   tablePrefabs: []
@@ -21455,7 +21448,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   unit1WallPrefab: {fileID: 9131080604107295868, guid: 9e15cc98a70fb4b458bc323ae1b182ff, type: 3}
-  doorPrefab: {fileID: 0}
   floorPrefab: {fileID: 3068211032169242613, guid: 1c59ea643dcbd0e4e8288239c3eefb6e, type: 3}
   size: {x: 10, y: 10}
   tablePrefabs: []
@@ -25498,7 +25490,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   unit1WallPrefab: {fileID: 9131080604107295868, guid: 9e15cc98a70fb4b458bc323ae1b182ff, type: 3}
-  doorPrefab: {fileID: 0}
   floorPrefab: {fileID: 3068211032169242613, guid: 1c59ea643dcbd0e4e8288239c3eefb6e, type: 3}
   size: {x: 10, y: 10}
   tablePrefabs: []
@@ -28819,6 +28810,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   roomPrefabs:
   - {fileID: 1688757068730732720, guid: b5e9a0569285e134587a068caa5a559d, type: 3}
+  - {fileID: 723959277400453859, guid: 78d533bd85bb3be47af5f6d8fb1cbf64, type: 3}
   minXWidth: 1
   minZWidth: 1
   dungeonSizeX: 20
@@ -35481,7 +35473,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   unit1WallPrefab: {fileID: 9131080604107295868, guid: 9e15cc98a70fb4b458bc323ae1b182ff, type: 3}
-  doorPrefab: {fileID: 0}
   floorPrefab: {fileID: 3068211032169242613, guid: 1c59ea643dcbd0e4e8288239c3eefb6e, type: 3}
   size: {x: 10, y: 10}
   tablePrefabs: []
@@ -45449,7 +45440,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   unit1WallPrefab: {fileID: 9131080604107295868, guid: 9e15cc98a70fb4b458bc323ae1b182ff, type: 3}
-  doorPrefab: {fileID: 0}
   floorPrefab: {fileID: 3068211032169242613, guid: 1c59ea643dcbd0e4e8288239c3eefb6e, type: 3}
   size: {x: 10, y: 10}
   tablePrefabs: []

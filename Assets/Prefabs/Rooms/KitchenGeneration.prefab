@@ -44,13 +44,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 82c676603b09c33468d561eed7d0c991, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  wallPrefabs:
-  - {fileID: 919132149155446097, guid: 25cf937b7c6cadf4fa613c6d4454de5a, type: 3}
-  - {fileID: 919132149155446097, guid: d342571d08926a84d99ae05004ff39cc, type: 3}
-  - {fileID: 919132149155446097, guid: 5075d87ee832ffc41af41b26c84e7ddb, type: 3}
-  doorPrefab: {fileID: 0}
+  unit1WallPrefab: {fileID: 9131080604107295868, guid: 9e15cc98a70fb4b458bc323ae1b182ff, type: 3}
   floorPrefab: {fileID: 3068211032169242613, guid: 1c59ea643dcbd0e4e8288239c3eefb6e, type: 3}
-  size: {x: 12, y: 12}
+  size: {x: 20, y: 20}
   barPresetPrefab: {fileID: 3911629406946552416, guid: c9ed8781044505d489b73fdfb0c14ee0, type: 3}
   barrelPrefabs:
   - {fileID: 9089401514291895931, guid: 589e7f56b1ff39b4f999ff40d2e7381b, type: 3}
