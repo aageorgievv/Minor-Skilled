@@ -46,7 +46,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   unit1WallPrefab: {fileID: 9131080604107295868, guid: 9e15cc98a70fb4b458bc323ae1b182ff, type: 3}
   floorPrefab: {fileID: 3068211032169242613, guid: 1c59ea643dcbd0e4e8288239c3eefb6e, type: 3}
-  size: {x: 20, y: 20}
+  size: {x: 16, y: 16}
   barPresetPrefab: {fileID: 3911629406946552416, guid: c9ed8781044505d489b73fdfb0c14ee0, type: 3}
   barrelPrefabs:
   - {fileID: 9089401514291895931, guid: 589e7f56b1ff39b4f999ff40d2e7381b, type: 3}
@@ -65,5 +65,5 @@ MonoBehaviour:
   chairPrefab: {fileID: 2382700466248928502, guid: 47590335a5c652841ad2024ddec867ae, type: 3}
   barSizeSpawn: 12
   tableSizeSpawn: 12
-  BarrelSizeSpawn: 12
+  barrelSizeSpawn: 0
   barrelSpawnAmount: 5

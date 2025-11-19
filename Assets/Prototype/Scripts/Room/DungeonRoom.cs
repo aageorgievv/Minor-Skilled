@@ -10,10 +10,12 @@ public abstract class DungeonRoom : MonoBehaviour
     [Header("Generation settings")]
     [SerializeField, Min(1f)] public Vector2Int size;
 
+    protected HashSet<Vector2Int> doorPositions = new HashSet<Vector2Int>();
+
     protected const int maxPlacementIterations = 500;
 
     private Vector2Int lastSize;
-    private Room room;
+    protected Room room;
     private LayerMask furnitureLayer;
 
     protected virtual void Start()
@@ -43,26 +45,26 @@ public abstract class DungeonRoom : MonoBehaviour
         GenerateInterior(room);
     }
 
-    private void GenerateWalls(Room room)
+    protected virtual void GenerateWalls(Room room)
     {
         float halfWidth = room.Width / 2f;
         float halfLength = room.Length / 2f;
 
         //Offsetting the walls to both avoid gaps in the corners and to align the grid properly(So the grid doesn't overlap with the walls)
         float offset = 1f;
-        float anotherOffest = 0.5f;
+        float anotherOffset = 0.5f;
 
         //Bottom
-        GenerateWallLine(room, new Vector3(room.center.x - halfWidth, 0, room.center.z - halfLength - anotherOffest), Vector3.right, 0, size.x + 1);
+        GenerateWallLine(room, new Vector3(room.center.x - halfWidth, 0, room.center.z - halfLength - anotherOffset), Vector3.right, 0, size.x + 1);
         //Top
-        GenerateWallLine(room, new Vector3(room.center.x - halfWidth, 0, room.center.z + halfLength + anotherOffest), Vector3.right, 0, size.x + 1);
+        GenerateWallLine(room, new Vector3(room.center.x - halfWidth, 0, room.center.z + halfLength + anotherOffset), Vector3.right, 0, size.x + 1);
         //Left
-        GenerateWallLine(room, new Vector3(room.center.x - halfWidth - anotherOffest, 0, room.center.z - halfLength - offset), Vector3.forward, 90, size.y + 1);
+        GenerateWallLine(room, new Vector3(room.center.x - halfWidth - anotherOffset, 0, room.center.z - halfLength - offset), Vector3.forward, 90, size.y + 1);
         //Right
-        GenerateWallLine(room, new Vector3(room.center.x + halfWidth + anotherOffest, 0, room.center.z - halfLength - offset), Vector3.forward, 90, size.y + 1);
+        GenerateWallLine(room, new Vector3(room.center.x + halfWidth + anotherOffset, 0, room.center.z - halfLength - offset), Vector3.forward, 90, size.y + 1);
     }
 
-    private void GenerateWallLine(Room room, Vector3 startPos, Vector3 dir, int angle, int totalLength)
+    protected void GenerateWallLine(Room room, Vector3 startPos, Vector3 dir, int angle, int totalLength)
     {
         int placedUnits = 0;
 
@@ -298,9 +300,14 @@ public abstract class DungeonRoom : MonoBehaviour
         return size;
     }
 
+    public void AddDoor(Vector2Int globalGridPosition)
+    {
+        doorPositions.Add(globalGridPosition);
+    }
+
 
     //Old Methods
-    protected bool TryPlaceObject(GameObject prefab, Vector3 localPosition, Quaternion localRotation)
+/*    protected bool TryPlaceObject(GameObject prefab, Vector3 localPosition, Quaternion localRotation)
     {
         if (prefab == null)
         {
@@ -337,6 +344,5 @@ public abstract class DungeonRoom : MonoBehaviour
     {
         Collider[] hits = Physics.OverlapBox(worldPosition, halfExtents, worldRotation, layerMask);
         return hits.Length == 0;
-    }
-
+    }*/
 }

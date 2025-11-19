@@ -25,7 +25,7 @@ public static class BinarySpacePartitioningAlgorithm
                     {
                         SplitVertically(minXWidth, roomsQueue, room);
                     }
-                    else if (room.size.x >= minXWidth && room.z >= minZWidth)
+                    else if (room.size.x >= minXWidth && room.size.z >= minZWidth)
                     {
                         roomsList.Add(room);
                     }
