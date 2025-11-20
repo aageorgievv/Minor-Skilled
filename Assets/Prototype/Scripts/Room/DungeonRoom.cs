@@ -305,44 +305,43 @@ public abstract class DungeonRoom : MonoBehaviour
         doorPositions.Add(globalGridPosition);
     }
 
-
     //Old Methods
-/*    protected bool TryPlaceObject(GameObject prefab, Vector3 localPosition, Quaternion localRotation)
-    {
-        if (prefab == null)
+    /*    protected bool TryPlaceObject(GameObject prefab, Vector3 localPosition, Quaternion localRotation)
         {
-            Debug.LogError($"The prefab: {nameof(prefab)} is null");
+            if (prefab == null)
+            {
+                Debug.LogError($"The prefab: {nameof(prefab)} is null");
+                return false;
+            }
+
+            BoxCollider collider = prefab.GetComponent<BoxCollider>();
+
+            if (collider == null)
+            {
+                Debug.LogError($"The prefab: {nameof(prefab)} is missing a BoxCollider");
+                return false;
+            }
+
+            Vector3 worldPosition = transform.TransformPoint(localPosition);
+            Quaternion worldRotation = transform.rotation * localRotation;
+
+            if (IsSpaceFree(worldPosition, collider.size * 0.5f, worldRotation, furnitureLayer))
+            {
+                GameObject newObject = Instantiate(prefab, transform);
+                newObject.transform.localPosition = localPosition;
+                newObject.transform.localRotation = localRotation;
+                Physics.SyncTransforms();
+
+                Debug.Log($"Placing {nameof(prefab)} at {localPosition}");
+                return true;
+            }
+
             return false;
         }
 
-        BoxCollider collider = prefab.GetComponent<BoxCollider>();
-
-        if (collider == null)
+        private bool IsSpaceFree(Vector3 worldPosition, Vector3 halfExtents, Quaternion worldRotation, LayerMask layerMask)
         {
-            Debug.LogError($"The prefab: {nameof(prefab)} is missing a BoxCollider");
-            return false;
-        }
-
-        Vector3 worldPosition = transform.TransformPoint(localPosition);
-        Quaternion worldRotation = transform.rotation * localRotation;
-
-        if (IsSpaceFree(worldPosition, collider.size * 0.5f, worldRotation, furnitureLayer))
-        {
-            GameObject newObject = Instantiate(prefab, transform);
-            newObject.transform.localPosition = localPosition;
-            newObject.transform.localRotation = localRotation;
-            Physics.SyncTransforms();
-
-            Debug.Log($"Placing {nameof(prefab)} at {localPosition}");
-            return true;
-        }
-
-        return false;
-    }
-
-    private bool IsSpaceFree(Vector3 worldPosition, Vector3 halfExtents, Quaternion worldRotation, LayerMask layerMask)
-    {
-        Collider[] hits = Physics.OverlapBox(worldPosition, halfExtents, worldRotation, layerMask);
-        return hits.Length == 0;
-    }*/
+            Collider[] hits = Physics.OverlapBox(worldPosition, halfExtents, worldRotation, layerMask);
+            return hits.Length == 0;
+        }*/
 }
