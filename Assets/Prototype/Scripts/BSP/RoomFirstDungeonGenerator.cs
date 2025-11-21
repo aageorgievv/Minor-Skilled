@@ -86,12 +86,12 @@ public class RoomFirstDungeonGenerator : AbstractDungeonGenerator
     private void SpawnCorridorConnection(BoundsInt startRoom, BoundsInt endRoom)
     {
         //Horizontal
-        if(startRoom.x != endRoom.x)
+        if (startRoom.x != endRoom.x)
         {
             int corridorStartX;
             int corridorEndX;
 
-            if(startRoom.x < endRoom.x)
+            if (startRoom.x < endRoom.x)
             {
                 corridorStartX = startRoom.max.x + padding;
                 corridorEndX = endRoom.min.x - padding;
@@ -109,8 +109,31 @@ public class RoomFirstDungeonGenerator : AbstractDungeonGenerator
             Vector3 position = new Vector3(x, 0, corridorZ - corridorWidth / 2);
             SpawnCorridor(position, new Vector2Int(lengthX * 2, corridorWidth), CorridorRoom.EOrientation.Horizontal);
         }
+        else if (startRoom.z != endRoom.z)
+        {
+            int corridorStartZ;
+            int corridorEndZ;
+
+            if (startRoom.z < endRoom.z)
+            {
+                corridorStartZ = startRoom.max.z + padding;
+                corridorEndZ = endRoom.min.z - padding;
+            }
+            else
+            {
+                corridorStartZ = endRoom.max.z + padding;
+                corridorEndZ = startRoom.min.z - padding;
+            }
+
+            int z = corridorStartZ + (corridorEndZ - corridorStartZ) / 2;
+            int lengthZ = corridorEndZ - corridorStartZ + padding * 2;
+
+            int corridorX = Mathf.RoundToInt(startRoom.center.x);
+            Vector3 position = new Vector3(corridorX - corridorWidth / 2, 0, z);
+            SpawnCorridor(position, new Vector2Int(corridorWidth, lengthZ * 2), CorridorRoom.EOrientation.Vertical);
+        }
     }
-    
+
     private void SpawnCorridor(Vector3 position, Vector2Int size, CorridorRoom.EOrientation orientation)
     {
         if (corridorPrefab == null) return;
