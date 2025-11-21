@@ -166,23 +166,4 @@ public class BedroomRoom : DungeonRoom
             TryPlaceObjectAlongWall(room, chestPrefab, chestGridSize, chestPivotOffset, 0);
         }
     }
-
-    /*    //Debug
-        public struct Placement
-        {
-            public Vector3 position;
-            public Quaternion rotation;
-            public Vector3 size;
-        }
-
-        private readonly List<Placement> placements = new List<Placement>();
-        private void OnDrawGizmos()
-        {
-            Gizmos.color = Color.red;
-
-            foreach (Placement placement in placements)
-            {
-                Gizmos.DrawCube(placement.position, placement.size);
-            }
-        }*/
 }

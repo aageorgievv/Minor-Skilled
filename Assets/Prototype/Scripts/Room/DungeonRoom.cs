@@ -10,8 +10,6 @@ public abstract class DungeonRoom : MonoBehaviour
     [Header("Generation settings")]
     [SerializeField, Min(1f)] public Vector2Int size;
 
-    protected HashSet<Vector2Int> doorPositions = new HashSet<Vector2Int>();
-
     protected const int maxPlacementIterations = 500;
 
     private Vector2Int lastSize;
@@ -298,11 +296,6 @@ public abstract class DungeonRoom : MonoBehaviour
         }
 
         return size;
-    }
-
-    public void AddDoor(Vector2Int globalGridPosition)
-    {
-        doorPositions.Add(globalGridPosition);
     }
 
     //Old Methods
