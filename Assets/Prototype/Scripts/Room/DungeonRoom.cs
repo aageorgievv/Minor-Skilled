@@ -3,6 +3,8 @@ using UnityEngine;
 
 public abstract class DungeonRoom : MonoBehaviour
 {
+    public BoundsInt Bounds { get; set; }
+
     [Header("Room Shell")]
     [SerializeField] protected GameObject unit1WallPrefab;
     [SerializeField] protected GameObject floorPrefab;
