@@ -8,6 +8,11 @@ using Random = UnityEngine.Random;
 
 public class RoomFirstDungeonGenerator : AbstractDungeonGenerator
 {
+    [Header("Debug")]
+    [SerializeField] private bool debugSpawnBspPartitions = true;
+
+    private List<BoundsInt> debugBspPartitions = new List<BoundsInt>();
+
     [Header("Settings")]
     [SerializeField] private int minXWidth;
     [SerializeField] private int minZWidth;
@@ -47,6 +52,11 @@ public class RoomFirstDungeonGenerator : AbstractDungeonGenerator
 
         var roomsList = BinarySpacePartitioningAlgorithm.BinarySpacePartitioning(dungeonBounds, minPartitionX, minPartitionZ);
 
+        debugBspPartitions = roomsList;
+
+        if (debugSpawnBspPartitions)
+            DebugSpawnBspPartitions(roomsList);
+
         List<DungeonRoom> rooms = new List<DungeonRoom>();
 
         foreach (var roomBounds in roomsList)
@@ -77,6 +87,50 @@ public class RoomFirstDungeonGenerator : AbstractDungeonGenerator
         }
 
         ConnectRooms(rooms);
+    }
+
+    private void DebugSpawnBspPartitions(List<BoundsInt> partitions)
+    {
+        // Optional: put these under a parent so your hierarchy stays clean
+        GameObject parent = GameObject.Find("BSP_Debug") ?? new GameObject("BSP_Debug");
+
+        // Clean previous debug meshes
+        for (int i = parent.transform.childCount - 1; i >= 0; i--)
+        {
+            DestroyImmediate(parent.transform.GetChild(i).gameObject);
+        }
+
+        for (int i = 0; i < partitions.Count; i++)
+        {
+            BoundsInt b = partitions[i];
+
+            // World-space center and size
+            Vector3 center = new Vector3(
+                b.center.x * roomScale,
+                0f,
+                b.center.z * roomScale
+            );
+
+            Vector3 size = new Vector3(
+                b.size.x * roomScale,
+                0.1f,                       // thin height so it’s like a floor tile
+                b.size.z * roomScale
+            );
+
+            GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            cube.name = $"BSP_{i}_min({b.min.x},{b.min.z})_max({b.max.x},{b.max.z})";
+            cube.transform.SetParent(parent.transform);
+            cube.transform.position = center;
+            cube.transform.localScale = size;
+
+            // Random color for each partition
+            var renderer = cube.GetComponent<Renderer>();
+            if (renderer != null)
+            {
+                renderer.material = new Material(renderer.sharedMaterial);
+                renderer.material.color = Random.ColorHSV(0f, 1f, 0.7f, 1f, 0.7f, 1f);
+            }
+        }
     }
 
     private void ConnectRooms(List<DungeonRoom> rooms)
@@ -176,6 +230,9 @@ public class RoomFirstDungeonGenerator : AbstractDungeonGenerator
 
     private DungeonRoom FindClosestPointTo(DungeonRoom currentRoom, List<DungeonRoom> rooms)
     {
+        // TODO: find a better way to find closest room than just compariong centers - check closest corners or something
+
+
         DungeonRoom closest = null;
         float distance = float.MaxValue;
 
