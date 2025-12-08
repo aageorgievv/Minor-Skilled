@@ -11,8 +11,6 @@ public class RoomFirstDungeonGenerator : AbstractDungeonGenerator
     [Header("Debug")]
     [SerializeField] private bool debugSpawnBspPartitions = true;
 
-    private List<BoundsInt> debugBspPartitions = new List<BoundsInt>();
-
     [Header("Settings")]
     [SerializeField] private int minXWidth;
     [SerializeField] private int minZWidth;
@@ -25,19 +23,10 @@ public class RoomFirstDungeonGenerator : AbstractDungeonGenerator
 
     private Dictionary<Vector2Int, BoundsFloat> roomBoundsMap = new Dictionary<Vector2Int, BoundsFloat>();
 
-    private float roomScale = 4f;
     const int padding = 2;
-
-    GameObject cube = null;
 
     protected override void RunProceduralGeneration()
     {
-        if (cube == null)
-        {
-            cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            cube.name = "DEBUGCUBE";
-            cube.GetComponent<Renderer>().material.color = Color.red;
-        }
         CreateRooms();
     }
 
@@ -52,8 +41,6 @@ public class RoomFirstDungeonGenerator : AbstractDungeonGenerator
 
         var roomsList = BinarySpacePartitioningAlgorithm.BinarySpacePartitioning(dungeonBounds, minPartitionX, minPartitionZ);
 
-        debugBspPartitions = roomsList;
-
         if (debugSpawnBspPartitions)
             DebugSpawnBspPartitions(roomsList);
 
@@ -61,29 +48,8 @@ public class RoomFirstDungeonGenerator : AbstractDungeonGenerator
 
         foreach (var roomBounds in roomsList)
         {
-            //Vector3Int newMin = new Vector3Int(
-            //    roomBounds.min.x + padding * 2,
-            //    roomBounds.min.y,
-            //    roomBounds.min.z + padding * 2);
-
-            //Vector3Int newSize = new Vector3Int(
-            //    roomBounds.size.x - (padding * 2),
-            //    roomBounds.size.y,
-            //    roomBounds.size.z - padding * 2);
-
-            //if (newSize.x <= 0 || newSize.z <= 0)
-            //{
-            //    continue;
-            //}
-
-            //BoundsInt newBounds = new BoundsInt(newMin, newSize);
-            //Vector3Int center3D = Vector3Int.RoundToInt(newBounds.center);
-            //Vector2Int center2D = new Vector2Int(center3D.x, center3D.z);
-
             var room = SpawnRoom(roomBounds);
             rooms.Add(room);
-
-            //roomBoundsMap.Add(center2D, newBounds);
         }
 
         ConnectRooms(rooms);
@@ -91,7 +57,6 @@ public class RoomFirstDungeonGenerator : AbstractDungeonGenerator
 
     private void DebugSpawnBspPartitions(List<BoundsInt> partitions)
     {
-        // Optional: put these under a parent so your hierarchy stays clean
         GameObject parent = GameObject.Find("BSP_Debug") ?? new GameObject("BSP_Debug");
 
         // Clean previous debug meshes
@@ -106,24 +71,18 @@ public class RoomFirstDungeonGenerator : AbstractDungeonGenerator
 
             // World-space center and size
             Vector3 center = new Vector3(
-                b.center.x * roomScale,
+                b.center.x,
                 0f,
-                b.center.z * roomScale
+                b.center.z
             );
 
-            Vector3 size = new Vector3(
-                b.size.x * roomScale,
-                0.1f,                       // thin height so it’s like a floor tile
-                b.size.z * roomScale
-            );
+            Vector3 size = new Vector3(b.size.x, 0.1f, b.size.z);
 
             GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            cube.name = $"BSP_{i}_min({b.min.x},{b.min.z})_max({b.max.x},{b.max.z})";
             cube.transform.SetParent(parent.transform);
             cube.transform.position = center;
             cube.transform.localScale = size;
 
-            // Random color for each partition
             var renderer = cube.GetComponent<Renderer>();
             if (renderer != null)
             {
@@ -142,86 +101,83 @@ public class RoomFirstDungeonGenerator : AbstractDungeonGenerator
         {
             DungeonRoom closest = FindClosestPointTo(currentRoomCenter, rooms);
             rooms.Remove(closest);
-            //DrawDebugBox(currentRoomCenter, closest);
             SpawnCorridorConnection(currentRoomCenter, closest);
             currentRoomCenter = closest;
         }
     }
 
-    void DrawDebugBox(BoundsInt startRoom, BoundsInt endRoom)
-    {
-        BoundsInt leftRoom = (startRoom.x < endRoom.x) ? startRoom : endRoom;
-        BoundsInt rightRoom = (startRoom.x > endRoom.x) ? startRoom : endRoom;
-
-        BoundsInt roomBounds = leftRoom;
-        cube.transform.position = new Vector3(roomBounds.center.x * roomScale, 0f, roomBounds.center.z * roomScale) - new Vector3(8, 0, 0);
-
-
-        //Vector3 pos = new Vector3(leftRoom.x, leftRoom.position.y, leftRoom.position.z);
-        //cube.transform.position = pos * roomScale;
-    }
-
     private void SpawnCorridorConnection(DungeonRoom startRoom, DungeonRoom endRoom)
     {
-        //Horizontal
-        if (startRoom.Bounds.x != endRoom.Bounds.x)
+        var a = startRoom.Bounds;
+        var b = endRoom.Bounds;
+
+        // Decide whether to connect horizontally or vertically based on which separation is bigger
+        bool connectHorizontally = Mathf.Abs(a.center.x - b.center.x) > Mathf.Abs(a.center.z - b.center.z);
+
+        if (connectHorizontally)
         {
+            // Horizontal
+            int corridorZ = Mathf.RoundToInt(Mathf.Lerp(a.center.z, b.center.z, 0.5f));
 
-            float corridorStartX;
-            float corridorEndX;
+            int startX, endX;
 
-            if (startRoom.Bounds.x < endRoom.Bounds.x)
+            if (a.min.x < b.min.x)
             {
-                corridorStartX = startRoom.Bounds.center.x + startRoom.size.x / 2f;
-                corridorEndX = endRoom.Bounds.center.x - endRoom.size.x / 2;
+                // a is left, b is right
+                startX = a.max.x - padding;
+                endX = b.min.x + padding;
             }
             else
             {
-                corridorStartX = endRoom.Bounds.center.x + endRoom.size.x / 2f; // accounting for the walls
-                corridorEndX = startRoom.Bounds.center.x - startRoom.size.x / 2f;
+                // b is left, a is right
+                startX = b.max.x - padding;
+                endX = a.min.x + padding;
             }
 
-            float x = (corridorEndX + corridorStartX) / 2f;
-            float lengthX = Mathf.Abs(corridorEndX - corridorStartX) + padding * 2;
+            int lengthX = Mathf.Abs(endX - startX);
+            if (lengthX <= 0) return; // safety
 
-            int corridorZ = Mathf.RoundToInt(startRoom.Bounds.center.z);
-            Vector3 position = new Vector3(x, 0, corridorZ - corridorWidth / 2);
+            float x = (startX + endX) / 2f;
+            Vector3 position = new Vector3(x, 0f, corridorZ);
 
-            SpawnCorridor(position, new Vector2Int((int)lengthX, corridorWidth), CorridorRoom.EOrientation.Horizontal);
+            SpawnCorridor(position, new Vector2Int(lengthX, corridorWidth), CorridorRoom.EOrientation.Horizontal);
         }
-        else if (startRoom.Bounds.z != endRoom.Bounds.z)
+        else
         {
-            float corridorStartZ;
-            float corridorEndZ;
+            // Vertical
+            int corridorX = Mathf.RoundToInt(Mathf.Lerp(a.center.x, b.center.x, 0.5f));
 
-            if (startRoom.Bounds.z < endRoom.Bounds.z)
+            int startZ, endZ;
+
+            if (a.min.z < b.min.z)
             {
-                corridorStartZ = startRoom.Bounds.center.z + startRoom.size.y / 2f;
-                corridorEndZ = endRoom.Bounds.center.z - endRoom.size.y / 2;
+                // a is bottom, b is top
+                startZ = a.max.z - padding;
+                endZ = b.min.z + padding;
             }
             else
             {
-                corridorStartZ = endRoom.Bounds.center.z + endRoom.size.y / 2f; // accounting for the walls
-                corridorEndZ = startRoom.Bounds.center.z - startRoom.size.y / 2f;
+                // b is bottom, a is top
+                startZ = b.max.z - padding;
+                endZ = a.min.z + padding;
             }
 
-            float z = (corridorEndZ + corridorStartZ) / 2f;
-            float lengthZ = Mathf.Abs(corridorEndZ - corridorStartZ) + padding * 2;
+            int lengthZ = Mathf.Abs(endZ - startZ);
+            if (lengthZ <= 0) return; // safety
 
-            int corridorZ = Mathf.RoundToInt(startRoom.Bounds.center.z);
-            Vector3 position = new Vector3(corridorZ - corridorWidth / 2, 0f, z);
+            float z = (startZ + endZ) / 2f;
+            Vector3 position = new Vector3(corridorX, 0f, z);
 
-            SpawnCorridor(position, new Vector2Int(corridorWidth, (int)lengthZ), CorridorRoom.EOrientation.Vertical);
+            SpawnCorridor(position, new Vector2Int(corridorWidth, lengthZ), CorridorRoom.EOrientation.Vertical);
         }
     }
-
 
 
     private void SpawnCorridor(Vector3 position, Vector2Int size, CorridorRoom.EOrientation orientation)
     {
         if (corridorPrefab == null) return;
 
-        Vector3 center = position * roomScale;
+        Vector3 center = position;
 
         CorridorRoom corridor = Instantiate(corridorPrefab, center, Quaternion.identity, transform);
         corridor.InitializeCorridor(orientation, size);
@@ -257,7 +213,7 @@ public class RoomFirstDungeonGenerator : AbstractDungeonGenerator
     private DungeonRoom SpawnRoom(BoundsInt roomBounds)
     {
         Vector3 roomCenter = roomBounds.center;
-        Vector3 worldCenter = new Vector3(roomCenter.x * roomScale, 0f, roomCenter.z * roomScale);
+        Vector3 worldCenter = new Vector3(roomCenter.x, 0f, roomCenter.z);
 
         if (roomPrefabs == null || roomPrefabs.Length == 0)
         {
@@ -265,11 +221,18 @@ public class RoomFirstDungeonGenerator : AbstractDungeonGenerator
             return null;
         }
 
-
         DungeonRoom randomRoomPrefab = roomPrefabs[UnityEngine.Random.Range(0, roomPrefabs.Length)];
         DungeonRoom newRoom = Instantiate(randomRoomPrefab, worldCenter, Quaternion.identity, transform);
+
         newRoom.Bounds = roomBounds;
+
+        int gridWidth = Mathf.Max(1, roomBounds.size.x - padding * 2);
+        int gridLength = Mathf.Max(1, roomBounds.size.z - padding * 2);
+
+        newRoom.size = new Vector2Int(gridWidth, gridLength);
+
         newRoom.StartGenerating();
         return newRoom;
     }
+
 }
