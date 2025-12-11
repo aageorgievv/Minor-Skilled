@@ -1,21 +1,20 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UIElements;
 using static UnityEditor.PlayerSettings;
 using Random = UnityEngine.Random;
 
 
 public class RoomFirstDungeonGenerator : AbstractDungeonGenerator
 {
-    [Header("Debug")]
-    [SerializeField] private bool debugSpawnBspPartitions = true;
-
     [Header("Settings")]
     [SerializeField] private int minXWidth;
     [SerializeField] private int minZWidth;
     [SerializeField] private int dungeonSizeX;
     [SerializeField] private int dungeonSizeZ;
+    [SerializeField] private float maxConnectionDistance = 30f;
 
     [Header("Corridor Settings")]
     [SerializeField] private int corridorWidth = 2;
@@ -41,8 +40,7 @@ public class RoomFirstDungeonGenerator : AbstractDungeonGenerator
 
         var roomsList = BinarySpacePartitioningAlgorithm.BinarySpacePartitioning(dungeonBounds, minPartitionX, minPartitionZ);
 
-        if (debugSpawnBspPartitions)
-            DebugSpawnBspPartitions(roomsList);
+        DebugSpawnBspPartitions(roomsList);
 
         List<DungeonRoom> rooms = new List<DungeonRoom>();
 
@@ -94,15 +92,55 @@ public class RoomFirstDungeonGenerator : AbstractDungeonGenerator
 
     private void ConnectRooms(List<DungeonRoom> rooms)
     {
-        var currentRoomCenter = rooms[Random.Range(0, rooms.Count)];
-        rooms.Remove(currentRoomCenter);
-
-        while (rooms.Count > 0)
+        if (rooms == null || rooms.Count == 0)
         {
-            DungeonRoom closest = FindClosestPointTo(currentRoomCenter, rooms);
-            rooms.Remove(closest);
-            SpawnCorridorConnection(currentRoomCenter, closest);
-            currentRoomCenter = closest;
+            return;
+        }
+
+        // Start from the first room
+        List<DungeonRoom> connectedRooms = new List<DungeonRoom>();
+        DungeonRoom start = rooms[0];
+        connectedRooms.Add(start);
+
+        // Until all rooms are connected, always connect the closest unconnected room
+        while (connectedRooms.Count < rooms.Count)
+        {
+            DungeonRoom bestFrom = null;
+            DungeonRoom bestTo = null;
+            float bestDistance = float.MaxValue;
+
+            // Find the closest pair: (connected room) -> (unconnected room)
+            foreach (DungeonRoom from in connectedRooms)
+            {
+                foreach (DungeonRoom to in rooms)
+                {
+                    if (connectedRooms.Contains(to) || ReferenceEquals(from, to))
+                    {
+                        continue;
+                    }
+
+                    float distance = Vector3.Distance(from.Bounds.center, to.Bounds.center);
+
+                    if (distance < bestDistance)
+                    {
+                        bestDistance = distance;
+                        bestFrom = from;
+                        bestTo = to;
+                    }
+                }
+            }
+
+            // Connect them
+            if (bestFrom != null && bestTo != null)
+            {
+                SpawnCorridorConnection(bestFrom, bestTo);
+                connectedRooms.Add(bestTo);
+            }
+            else
+            {
+                // Safety break: something went wrong, avoid infinite loop
+                break;
+            }
         }
     }
 
@@ -117,9 +155,8 @@ public class RoomFirstDungeonGenerator : AbstractDungeonGenerator
         if (connectHorizontally)
         {
             // Horizontal
-            int corridorZ = Mathf.RoundToInt(Mathf.Lerp(a.center.z, b.center.z, 0.5f));
-
-            int startX, endX;
+            int startX;
+            int endX;
 
             if (a.min.x < b.min.x)
             {
@@ -135,19 +172,20 @@ public class RoomFirstDungeonGenerator : AbstractDungeonGenerator
             }
 
             int lengthX = Mathf.Abs(endX - startX);
-            if (lengthX <= 0) return; // safety
+            int corridorZ = Mathf.RoundToInt(Mathf.Lerp(a.center.z, b.center.z, 0.5f));
 
-            float x = (startX + endX) / 2f;
-            Vector3 position = new Vector3(x, 0f, corridorZ);
+            if (lengthX <= 0) return;
+
+            float middlePointX = (startX + endX) / 2f;
+            Vector3 position = new Vector3(middlePointX, 0f, corridorZ);
 
             SpawnCorridor(position, new Vector2Int(lengthX, corridorWidth), CorridorRoom.EOrientation.Horizontal);
         }
         else
         {
             // Vertical
-            int corridorX = Mathf.RoundToInt(Mathf.Lerp(a.center.x, b.center.x, 0.5f));
-
-            int startZ, endZ;
+            int startZ;
+            int endZ;
 
             if (a.min.z < b.min.z)
             {
@@ -163,15 +201,16 @@ public class RoomFirstDungeonGenerator : AbstractDungeonGenerator
             }
 
             int lengthZ = Mathf.Abs(endZ - startZ);
-            if (lengthZ <= 0) return; // safety
+            int corridorX = Mathf.RoundToInt(Mathf.Lerp(a.center.x, b.center.x, 0.5f));
 
-            float z = (startZ + endZ) / 2f;
-            Vector3 position = new Vector3(corridorX, 0f, z);
+            if (lengthZ <= 0) return;
+
+            float middlePointZ = (startZ + endZ) / 2f;
+            Vector3 position = new Vector3(corridorX, 0f, middlePointZ);
 
             SpawnCorridor(position, new Vector2Int(corridorWidth, lengthZ), CorridorRoom.EOrientation.Vertical);
         }
     }
-
 
     private void SpawnCorridor(Vector3 position, Vector2Int size, CorridorRoom.EOrientation orientation)
     {
@@ -182,32 +221,6 @@ public class RoomFirstDungeonGenerator : AbstractDungeonGenerator
         CorridorRoom corridor = Instantiate(corridorPrefab, center, Quaternion.identity, transform);
         corridor.InitializeCorridor(orientation, size);
         corridor.StartGenerating();
-    }
-
-    private DungeonRoom FindClosestPointTo(DungeonRoom currentRoom, List<DungeonRoom> rooms)
-    {
-        // TODO: find a better way to find closest room than just compariong centers - check closest corners or something
-
-
-        DungeonRoom closest = null;
-        float distance = float.MaxValue;
-
-        Vector3 currentCenter = currentRoom.Bounds.center;
-
-        foreach (var room in rooms)
-        {
-            Vector3 otherCenter = room.Bounds.center;
-
-            float currentDistance = Vector2.Distance(new Vector2(currentCenter.x, currentCenter.z), new Vector2(otherCenter.x, otherCenter.z));
-
-            if (currentDistance < distance)
-            {
-                distance = currentDistance;
-                closest = room;
-            }
-        }
-
-        return closest;
     }
 
     private DungeonRoom SpawnRoom(BoundsInt roomBounds)
