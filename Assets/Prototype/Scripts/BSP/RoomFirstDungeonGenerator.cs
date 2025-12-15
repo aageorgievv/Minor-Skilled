@@ -9,12 +9,16 @@ using Random = UnityEngine.Random;
 
 public class RoomFirstDungeonGenerator : AbstractDungeonGenerator
 {
-    [Header("Settings")]
+    [Header("Room Set")]
+    [SerializeField] private RoomSet roomSet;
+
+    [Header("Room Settings")]
     [SerializeField] private int minXWidth;
     [SerializeField] private int minZWidth;
+
+    [Header("Dungeon Settings")]
     [SerializeField] private int dungeonSizeX;
     [SerializeField] private int dungeonSizeZ;
-    [SerializeField] private float maxConnectionDistance = 30f;
 
     [Header("Corridor Settings")]
     [SerializeField] private int corridorWidth = 2;
@@ -22,7 +26,8 @@ public class RoomFirstDungeonGenerator : AbstractDungeonGenerator
 
     private Dictionary<Vector2Int, BoundsFloat> roomBoundsMap = new Dictionary<Vector2Int, BoundsFloat>();
 
-    const int padding = 2;
+    private const int padding = 2;
+    private const int lenghtOffset = 2;
 
     protected override void RunProceduralGeneration()
     {
@@ -40,7 +45,7 @@ public class RoomFirstDungeonGenerator : AbstractDungeonGenerator
 
         var roomsList = BinarySpacePartitioningAlgorithm.BinarySpacePartitioning(dungeonBounds, minPartitionX, minPartitionZ);
 
-        DebugSpawnBspPartitions(roomsList);
+        //DebugSpawnBspPartitions(roomsList);
 
         List<DungeonRoom> rooms = new List<DungeonRoom>();
 
@@ -67,12 +72,8 @@ public class RoomFirstDungeonGenerator : AbstractDungeonGenerator
         {
             BoundsInt b = partitions[i];
 
-            // World-space center and size
-            Vector3 center = new Vector3(
-                b.center.x,
-                0f,
-                b.center.z
-            );
+            // World-space center
+            Vector3 center = new Vector3(b.center.x, 0f, b.center.z);
 
             Vector3 size = new Vector3(b.size.x, 0.1f, b.size.z);
 
@@ -97,19 +98,16 @@ public class RoomFirstDungeonGenerator : AbstractDungeonGenerator
             return;
         }
 
-        // Start from the first room
         List<DungeonRoom> connectedRooms = new List<DungeonRoom>();
         DungeonRoom start = rooms[0];
         connectedRooms.Add(start);
 
-        // Until all rooms are connected, always connect the closest unconnected room
         while (connectedRooms.Count < rooms.Count)
         {
             DungeonRoom bestFrom = null;
             DungeonRoom bestTo = null;
             float bestDistance = float.MaxValue;
 
-            // Find the closest pair: (connected room) -> (unconnected room)
             foreach (DungeonRoom from in connectedRooms)
             {
                 foreach (DungeonRoom to in rooms)
@@ -130,7 +128,6 @@ public class RoomFirstDungeonGenerator : AbstractDungeonGenerator
                 }
             }
 
-            // Connect them
             if (bestFrom != null && bestTo != null)
             {
                 SpawnCorridorConnection(bestFrom, bestTo);
@@ -138,7 +135,6 @@ public class RoomFirstDungeonGenerator : AbstractDungeonGenerator
             }
             else
             {
-                // Safety break: something went wrong, avoid infinite loop
                 break;
             }
         }
@@ -179,7 +175,7 @@ public class RoomFirstDungeonGenerator : AbstractDungeonGenerator
             float middlePointX = (startX + endX) / 2f;
             Vector3 position = new Vector3(middlePointX, 0f, corridorZ);
 
-            SpawnCorridor(position, new Vector2Int(lengthX, corridorWidth), CorridorRoom.EOrientation.Horizontal);
+            SpawnCorridor(position, new Vector2Int(lengthX - lenghtOffset, corridorWidth), CorridorRoom.EOrientation.Horizontal);
         }
         else
         {
@@ -208,7 +204,7 @@ public class RoomFirstDungeonGenerator : AbstractDungeonGenerator
             float middlePointZ = (startZ + endZ) / 2f;
             Vector3 position = new Vector3(corridorX, 0f, middlePointZ);
 
-            SpawnCorridor(position, new Vector2Int(corridorWidth, lengthZ), CorridorRoom.EOrientation.Vertical);
+            SpawnCorridor(position, new Vector2Int(corridorWidth, lengthZ - lenghtOffset), CorridorRoom.EOrientation.Vertical);
         }
     }
 

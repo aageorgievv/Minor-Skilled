@@ -1,6 +1,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum ERoomType {
+    Starting,
+    Bedroom,
+    Kitchen,
+    Treasure
+}
+
 public abstract class DungeonRoom : MonoBehaviour
 {
     public BoundsInt Bounds { get; set; }
