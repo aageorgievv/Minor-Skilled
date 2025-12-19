@@ -25,55 +25,6 @@ public class BedroomRoom : DungeonRoom
         GenerateChests(room);
     }
 
-    /*    private void GenerateTableAndChairs(Room room, int iteration)
-        {
-            if (iteration > maxPlacementIterations)
-            {
-                Debug.LogError("Fail safe while generating table/chairs");
-                return;
-            }
-
-            if (room.Width >= tableSizeSpawn && room.Length >= tableSizeSpawn && tablePrefabs.Length > 0 && chairPrefab != null)
-            {
-                GameObject tablePrefab = tablePrefabs[Random.Range(0, tablePrefabs.Length)];
-
-                float offset = Random.Range(5, 10);
-                float halfWidth = room.Width / 2f;
-                float halfLength = room.Length / 2f;
-
-                float randomX = Random.Range(room.center.x - halfWidth + offset, room.center.x + halfWidth - offset);
-                float randomZ = Random.Range(room.center.z - halfLength + offset, room.center.z + halfLength - offset);
-                Vector3 randomPosition = new Vector3(randomX, 0, randomZ);
-
-                if (TryPlaceObject(tablePrefab, randomPosition, Quaternion.identity))
-                {
-                    float chairOffsetX = 1.5f;
-                    float chairOffsetZ = 0f;
-
-                    Vector3[] chairPositions =
-                    {
-                        randomPosition + new Vector3(chairOffsetX, 0, -chairOffsetZ),
-                        randomPosition + new Vector3(-chairOffsetX, 0, chairOffsetZ),
-                    };
-
-                    Quaternion[] chairOrientations =
-                    {
-                        Quaternion.Euler(0, 180, 0),
-                        Quaternion.Euler(0, 0, 0),
-                    };
-
-                    for (int i = 0; i < chairPositions.Length; i++)
-                    {
-                        TryPlaceObject(chairPrefab, chairPositions[i], chairOrientations[i]);
-                    }
-                }
-                else
-                {
-                    GenerateTableAndChairs(room, ++iteration);
-                }
-            }
-        }*/
-
     private void GenerateTableAndChairs(Room room, int iteration)
     {
         if (iteration > maxPlacementIterations)

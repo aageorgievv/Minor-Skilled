@@ -252,6 +252,11 @@ public abstract class DungeonRoom : MonoBehaviour
         return TryPlaceObjectOnGrid(room, prefab, gridSize, placedGridPos, placedRotation, pivotOffset);
     }
 
+    protected bool TryPlaceObjectInCenterArea(Room room, GameObject prefab, Vector2Int gridSize, Vector3 pivotOffset, int padding)
+    {
+        return TryPlaceObjectInCenterArea(room, prefab, gridSize, pivotOffset, padding, out _, out _);
+    }
+
     protected bool TryPlaceObjectOnGrid(Room room, GameObject prefab, Vector2Int objectGridSize, Vector2Int gridPosition, Quaternion localRotation, Vector3 pivotOffset)
     {
         Vector2Int rotatedSize = GetRotatedSize(objectGridSize, localRotation);

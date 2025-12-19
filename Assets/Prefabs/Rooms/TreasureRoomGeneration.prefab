@@ -1,0 +1,61 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &2159040014784059174
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8318690539080304786}
+  - component: {fileID: 4326662353368851260}
+  m_Layer: 0
+  m_Name: TreasureRoomGeneration
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8318690539080304786
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2159040014784059174}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -47.767082, y: -36.72103, z: 38.488842}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4326662353368851260
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2159040014784059174}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 99a395a665b74e14b809349921d71d63, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  unit1WallPrefab: {fileID: 9131080604107295868, guid: 9e15cc98a70fb4b458bc323ae1b182ff, type: 3}
+  floorPrefab: {fileID: 3068211032169242613, guid: 1c59ea643dcbd0e4e8288239c3eefb6e, type: 3}
+  size: {x: 15, y: 15}
+  smallBoxesPrefabs:
+  - {fileID: 1684227322643634953, guid: c9c74ac7d4ac70d4d8e741eecf5f627a, type: 3}
+  - {fileID: 8540257653821927196, guid: d642f52a9b84d2f47b714b35eac37c41, type: 3}
+  - {fileID: 7774949034997093023, guid: a38811ad3c5f4c246a8bbb899a007e4e, type: 3}
+  - {fileID: 1065950770545869691, guid: 9ebc683bc87b0504a981cfe17048c74a, type: 3}
+  treasureObjectPrefabs:
+  - {fileID: 6811226732869036453, guid: 1629cc35ab5e6154893910c1e33c11bc, type: 3}
+  - {fileID: 6581273703815021263, guid: 70a26987ad14e7946ba8cd707890ed9f, type: 3}
+  - {fileID: 8434487753813278985, guid: 51b1cf50884d69a44a878e2c964e83b7, type: 3}
+  largeBoxPrefab: {fileID: 7317020473586827058, guid: ece51ae5a7c2c594cb6da50406d777a9, type: 3}
+  maxChestSpawnAmount: 10
+  coinStackSpawnAmount: 15

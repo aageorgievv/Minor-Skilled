@@ -59,7 +59,7 @@ MonoBehaviour:
   chairPrefab: {fileID: 2382700466248928502, guid: 47590335a5c652841ad2024ddec867ae, type: 3}
   emptyChestPrefab: {fileID: 6615146264328433009, guid: e2c4d452f7b455b4f963dd045658af7b, type: 3}
   treasureChestPrefab: {fileID: 1065950770545869691, guid: 9ebc683bc87b0504a981cfe17048c74a, type: 3}
-  tableSizeSpawn: 10
+  tableSizeSpawn: 8
   chestSizeSpawn: 3
   bedSizeSpawn: 2
   maxChestSpawnAmount: 3
