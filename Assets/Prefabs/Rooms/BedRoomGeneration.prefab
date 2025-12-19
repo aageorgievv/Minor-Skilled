@@ -57,9 +57,16 @@ MonoBehaviour:
   - {fileID: 3510615712679776044, guid: 1c217bc5c86793743b8d470702a8d27d, type: 3}
   - {fileID: 1815131009555423275, guid: 7a906979ebc424c46abe5aca418ef473, type: 3}
   chairPrefab: {fileID: 2382700466248928502, guid: 47590335a5c652841ad2024ddec867ae, type: 3}
-  emptyChestPrefab: {fileID: 6615146264328433009, guid: e2c4d452f7b455b4f963dd045658af7b, type: 3}
-  treasureChestPrefab: {fileID: 1065950770545869691, guid: 9ebc683bc87b0504a981cfe17048c74a, type: 3}
+  treasureandBoxesPrefabs:
+  - {fileID: 8540257653821927196, guid: d642f52a9b84d2f47b714b35eac37c41, type: 3}
+  - {fileID: 6615146264328433009, guid: e2c4d452f7b455b4f963dd045658af7b, type: 3}
+  - {fileID: 1065950770545869691, guid: 9ebc683bc87b0504a981cfe17048c74a, type: 3}
+  - {fileID: 9089401514291895931, guid: 589e7f56b1ff39b4f999ff40d2e7381b, type: 3}
+  - {fileID: 3940669880384845609, guid: fc5c84aae091c0a49b401145632bad02, type: 3}
+  - {fileID: 1358171075417078754, guid: 2e057db3c898ff14fa5db79d617f245f, type: 3}
+  - {fileID: 7533292119581798347, guid: 562b31a58584a5f41a4a666c90b86aad, type: 3}
+  - {fileID: 7885129660163414531, guid: 4ad2d30b61fd0574c8df87b63db5a58b, type: 3}
   tableSizeSpawn: 8
   chestSizeSpawn: 3
   bedSizeSpawn: 2
-  maxChestSpawnAmount: 3
+  maxChestSpawnAmount: 5

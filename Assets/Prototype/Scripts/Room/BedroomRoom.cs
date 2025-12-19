@@ -8,15 +8,14 @@ public class BedroomRoom : DungeonRoom
     [SerializeField] private GameObject[] bedPrefabs;
     [SerializeField] private GameObject chairPrefab;
 
-    [Header("Treasure/Loot")]
-    [SerializeField] private GameObject emptyChestPrefab;
-    [SerializeField] private GameObject treasureChestPrefab;
+    [Header("Treasure/Boxes")]
+    [SerializeField] private GameObject[] treasureandBoxesPrefabs;
 
     [Header("Generation settings")]
     [SerializeField] private int tableSizeSpawn;
     [SerializeField] private int chestSizeSpawn;
     [SerializeField] private int bedSizeSpawn;
-    [SerializeField, Range(1, 5)] private int maxChestSpawnAmount;
+    [SerializeField, Range(5, 15)] private int maxChestSpawnAmount;
 
     protected override void GenerateInterior(Room room)
     {
@@ -101,20 +100,20 @@ public class BedroomRoom : DungeonRoom
 
     private void GenerateChests(Room room)
     {
-        if (treasureChestPrefab == null || emptyChestPrefab == null)
+        if (treasureandBoxesPrefabs.Length == 0)
         {
             Debug.LogError("Treasure prefabs are missing");
             return;
         }
 
-        GameObject chestPrefab = Random.value < 0.5f ? emptyChestPrefab : treasureChestPrefab;
-        int chestSpawnAmount = Random.Range(0, maxChestSpawnAmount + 1);
+        int spawnAmount = Random.Range(0, maxChestSpawnAmount + 1);
         Vector2Int chestGridSize = new Vector2Int(2, 2);
         Vector3 chestPivotOffset = new Vector3(0, 0, -0.25f);
 
-        for (int i = 0; i < chestSpawnAmount; ++i)
+        for (int i = 0; i < spawnAmount; ++i)
         {
-            TryPlaceObjectAlongWall(room, chestPrefab, chestGridSize, chestPivotOffset, 0);
+            GameObject randomPrefab = treasureandBoxesPrefabs[Random.Range(0, treasureandBoxesPrefabs.Length)];
+            TryPlaceObjectAlongWall(room, randomPrefab, chestGridSize, chestPivotOffset, 0);
         }
     }
 }
