@@ -2,23 +2,62 @@
 
 public class Grid : MonoBehaviour
 {
-    private readonly GridCell[,] cells;
-    private readonly float gridSize;
+    [Header("Grid settings")]
+    [SerializeField] private int xArea;
+    [SerializeField] private int zArea;
 
-    public Grid(int width, int height, float gridSize)
+    private float cellSize = 1f;
+    private float gizmosCellSize = 0.9f;
+    private GridCell[,] cells;
+
+    public Vector3 GetCellCenterWorld(int x, int z)
     {
-        this.gridSize = gridSize;
+        return transform.position + cells[z, x].Position;
+    }
 
-        for (int i = 0; i < height; i++)
+    public void BuildGrid()
+    {
+        cells = new GridCell[zArea, xArea];
+
+        for (int z = 0; z < zArea; z++)
         {
-            for(int j = 0; j < width; j++)
+            for (int x = 0; x < xArea; x++)
             {
-                cells[i, j] = new GridCell(i, j, gridSize);
+                cells[z, x] = new GridCell(x, z, cellSize);
             }
         }
     }
 
-    public Vector3 GetCellPosition(int x, int z) {
-        return transform.position + cells[z, x].Position;
+#if UNITY_EDITOR
+
+    private void OnValidate()
+    {
+        // Called when you change values in the Inspector
+        if (xArea < 1) xArea = 1;
+        if (zArea < 1) zArea = 1;
+        BuildGrid();
+    }
+#endif
+
+    private void OnDrawGizmos()
+    {
+        if (cells == null)
+        {
+            return;
+        }
+
+        Gizmos.color = Color.green;
+
+        Vector3 size = new Vector3(gizmosCellSize, 0.01f, gizmosCellSize);
+
+        for (int z = 0; z < this.zArea; z++)
+        {
+            for (int x = 0; x < this.xArea; x++)
+            {
+                Vector3 center = transform.position + cells[z, x].Position;
+
+                Gizmos.DrawCube(center, size);
+            }
+        }
     }
 }

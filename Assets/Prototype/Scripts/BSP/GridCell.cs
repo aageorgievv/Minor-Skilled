@@ -14,6 +14,6 @@ public class GridCell
         X = x;
         Z = z;
         Size = size;
-        Position = new Vector3(x * Size + Size / 2f, z * Size + Size / 2f);
+        Position = new Vector3(x * Size + Size / 2f, 0, z * Size + Size / 2f);
     }
 }
