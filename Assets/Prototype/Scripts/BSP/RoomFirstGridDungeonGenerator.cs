@@ -1,12 +1,13 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
 
-public class RoomFirstDungeonGenerator : AbstractDungeonGenerator
+public class RoomFirstGridDungeonGenerator : AbstractDungeonGenerator
 {
-    [Header("Room Set")]
-    [SerializeField] private RoomSet roomSet;
+    [SerializeField]
+    private float cellSize = 50f;
 
     [Header("Room Settings")]
     [SerializeField] private int minXWidth;
@@ -25,6 +26,19 @@ public class RoomFirstDungeonGenerator : AbstractDungeonGenerator
     private const int padding = 2;
     private const int lenghtOffset = 2;
 
+    private readonly List<GridRoom> rooms = new List<GridRoom>();
+    private int[,] gridCellIds;
+
+    private const int walkableId = 0;
+    private const int topLeftCornerId = 1;
+    private const int bottomLeftCornerId = 2;
+    private const int topRightCornerId = 3;
+    private const int bottomRightCornerId = 4;
+    private const int northWallId = 5;
+    private const int southWallId = 6;
+    private const int eastWallId = 7;
+    private const int westWallId = 8;
+
     protected override void RunProceduralGeneration()
     {
         CreateRooms();
@@ -32,27 +46,150 @@ public class RoomFirstDungeonGenerator : AbstractDungeonGenerator
 
     private void CreateRooms()
     {
-        roomBoundsMap.Clear();
+        gridCellIds = new int[dungeonSizeX, dungeonSizeZ];
 
-        int minPartitionX = minXWidth + (padding * 2);
-        int minPartitionZ = minZWidth + (padding * 2);
+        BoundsInt dungeonBounds = new BoundsInt(Vector3Int.zero, new Vector3Int(dungeonSizeX, 0, dungeonSizeZ));
+        List<BoundsInt> roomsList = BinarySpacePartitioningAlgorithm.BinarySpacePartitioning(dungeonBounds, minXWidth, minZWidth);
 
-        BoundsInt dungeonBounds = new BoundsInt(startPosition, new Vector3Int(dungeonSizeX, 1, dungeonSizeZ));
-
-        var roomsList = BinarySpacePartitioningAlgorithm.BinarySpacePartitioning(dungeonBounds, minPartitionX, minPartitionZ);
-
-        //DebugSpawnBspPartitions(roomsList);
-
-        List<DungeonRoom> rooms = new List<DungeonRoom>();
-
-        foreach (var roomBounds in roomsList)
+        rooms.Clear();
+        foreach (BoundsInt roomBounds in roomsList)
         {
-            var room = SpawnRoom(roomBounds);
+            int x = roomBounds.min.x;
+            int z = roomBounds.min.z;
+            int width = roomBounds.size.x;
+            int height = roomBounds.size.z;
+            GridRoom room = new GridRoom(x, z, width, height);
             rooms.Add(room);
         }
 
-        ConnectRooms(rooms);
+        CreateWalls();
+
     }
+
+    private void CreateWalls()
+    {
+        foreach (GridRoom room in rooms)
+        {
+            // put north and south walls
+            for (int x = 0; x < room.Width; x++)
+            {
+                int roomX = room.X + x;
+                int roomMinZ = room.Z;
+                int roomMaxZ = room.Z + room.Height - 1;
+
+                if (x == 0) // bottom-left corner
+                {
+                    gridCellIds[roomX, roomMinZ] = topLeftCornerId;
+                    gridCellIds[roomX, roomMaxZ] = bottomLeftCornerId;
+                }
+                else if (x == room.Width - 1) // bottom-right corner
+                {
+                    gridCellIds[roomX, roomMinZ] = topRightCornerId;
+                    gridCellIds[roomX, roomMaxZ] = bottomRightCornerId;
+                }
+                else
+                {
+                    gridCellIds[roomX, roomMinZ] = northWallId;
+                    gridCellIds[roomX, roomMaxZ] = southWallId;
+                }
+            }
+
+            for (int z = 0; z < room.Height; z++)
+            {
+                // we already did corners above
+                if (z == 0)
+                {
+                    continue;
+                }
+
+                // we already did corners above
+                if (z == room.Height - 1)
+                {
+                    continue;
+                }
+
+                int minX = room.X;
+                int maxX = room.X + room.Width - 1;
+                int roomZ = room.Z + z;
+
+                gridCellIds[minX, roomZ] = eastWallId;
+                gridCellIds[maxX, roomZ] = westWallId;
+            }
+        }
+    }
+
+    private void OnDrawGizmos()
+    {
+        if (gridCellIds == null)
+        {
+            return;
+        }
+
+        int xCells = gridCellIds.GetLength(0);
+        int zCells = gridCellIds.GetLength(1);
+
+        int halfXCells = Mathf.FloorToInt(xCells / 2f);
+        int halfZCells = Mathf.FloorToInt(zCells / 2f);
+
+        Color prevColor = Gizmos.color;
+
+        for (int z = 0; z < zCells; z++)
+        {
+            for (int x = 0; x < xCells; x++)
+            {
+                int id = gridCellIds[x, z];
+                Vector3 position = Grid.ToWorldPosition(x, z, cellSize);
+
+                Color color;
+                switch (id)
+                {
+                    case walkableId:
+                        color = Color.white;
+                        break;
+                    case topLeftCornerId:
+                    case bottomLeftCornerId:
+                    case topRightCornerId:
+                    case bottomRightCornerId:
+                        color = Color.cyan;
+                        break;
+                    case northWallId:
+                    case southWallId:
+                    case eastWallId:
+                    case westWallId:
+                        color = Color.red;
+                        break;
+                    default:
+                        color = Color.magenta;
+                        break;
+
+                }
+
+                Gizmos.color = color;
+                Gizmos.DrawCube(position, new Vector3(0.9f * cellSize, 0.1f, 0.9f * cellSize));
+            }
+        }
+
+
+        Gizmos.color = prevColor;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     private void DebugSpawnBspPartitions(List<BoundsInt> partitions)
     {
