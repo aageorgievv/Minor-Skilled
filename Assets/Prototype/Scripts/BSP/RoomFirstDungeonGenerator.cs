@@ -240,4 +240,8 @@ public class RoomFirstDungeonGenerator : AbstractDungeonGenerator
         return newRoom;
     }
 
+    protected override void DeleteProceduralGeneration()
+    {
+        throw new System.NotImplementedException();
+    }
 }

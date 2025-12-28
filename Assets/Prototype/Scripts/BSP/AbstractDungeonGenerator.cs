@@ -6,6 +6,10 @@ public abstract class AbstractDungeonGenerator : MonoBehaviour
 
     [Header("References")]
     [SerializeField] protected DungeonRoom[] roomPrefabs;
+
+    [SerializeField] protected GameObject cornerPrefab;
+    [SerializeField] protected GameObject wallPrefab;
+
     private void Start()
     {
         GenerateDungeon();
@@ -13,21 +17,14 @@ public abstract class AbstractDungeonGenerator : MonoBehaviour
 
     public void GenerateDungeon()
     {
-        for (int i = transform.childCount - 1; i >= 0; i--)
-        {
-            DestroyImmediate(transform.GetChild(i).gameObject);
-        }
-
         RunProceduralGeneration();
     }
 
-    public void DeleteGeneration()
+    public void DeleteDungeon()
     {
-        for (int i = transform.childCount - 1; i >= 0; i--)
-        {
-            DestroyImmediate(transform.GetChild(i).gameObject);
-        }
+        DeleteProceduralGeneration();
     }
 
     protected abstract void RunProceduralGeneration();
+    protected abstract void DeleteProceduralGeneration();
 }

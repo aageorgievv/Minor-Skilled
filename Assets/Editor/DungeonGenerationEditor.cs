@@ -22,7 +22,7 @@ public class DungeonGenerationEditor : Editor
 
         if(GUILayout.Button("Delete Generation"))
         {
-            generator.DeleteGeneration();
+            generator.DeleteDungeon();
         }
     }
 }
