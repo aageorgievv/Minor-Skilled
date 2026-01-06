@@ -1,12 +1,190 @@
 ﻿using System.Collections.Generic;
-using System.Drawing;
 using UnityEngine;
 using Color = UnityEngine.Color;
-using Random = UnityEngine.Random;
 
 
 public class RoomFirstGridDungeonGenerator : AbstractDungeonGenerator
 {
+    public void GenerateDungeon(int dungeonWidth, int dungeonHeight, int minRoomX, int minRoomZ)
+    {
+        gridCellIds = new int[dungeonWidth, dungeonHeight];
+
+        Queue<GridRoom> rooms = new Queue<GridRoom>();
+
+        GridRoom dungeon = new GridRoom(0, 0, dungeonWidth, dungeonHeight);
+        rooms.Enqueue(dungeon);
+
+        while (true)
+        {
+            if (!rooms.TryDequeue(out GridRoom roomToSplit))
+            {
+                Debug.LogError($"No rooms found to split");
+                break;
+            }
+
+            if (!BinarySpacePartitioningAlgorithm.SplitRoom(roomToSplit, rooms, minRoomX, minRoomZ))
+            {
+                // cannot split anymore
+                break;
+            }
+
+            GridRoom roomA = rooms.Dequeue();
+            GridRoom roomB = rooms.Dequeue();
+
+            // add walls to the rooms
+
+            AddWalls(roomA);
+            AddWalls(roomB);
+
+            ConnectRooms(roomA, roomB);
+
+            // conditions for enough rooms being generated
+            if(true)
+            {
+                // we're done splitting
+                break;
+            }
+
+            rooms.Enqueue(roomA);
+            rooms.Enqueue(roomB);
+        }
+
+
+
+
+        // rooms has your whole dungeon
+    }
+
+    private void AddWalls(GridRoom room)
+    {
+        for (int x = 0; x < room.Width; x++)
+        {
+            int roomX = room.X + x;
+            int roomMinZ = room.Z;
+            int roomMaxZ = room.Z + room.Height - 1;
+
+            if (x == 0) // bottom and top left corners
+            {
+                gridCellIds[roomX, roomMinZ] = topLeftCornerId;
+                gridCellIds[roomX, roomMaxZ] = bottomLeftCornerId;
+            }
+            else if (x == room.Width - 1) // bottom and top right corners
+            {
+                gridCellIds[roomX, roomMinZ] = topRightCornerId;
+                gridCellIds[roomX, roomMaxZ] = bottomRightCornerId;
+            }
+            else // put north and south walls
+            {
+                gridCellIds[roomX, roomMinZ] = northWallId;
+                gridCellIds[roomX, roomMaxZ] = southWallId;
+            }
+        }
+
+        for (int z = 0; z < room.Height; z++)
+        {
+            // we already did corners above
+            if (z == 0)
+            {
+                continue;
+            }
+
+            // we already did corners above
+            if (z == room.Height - 1)
+            {
+                continue;
+            }
+
+            int minX = room.X;
+            int maxX = room.X + room.Width - 1;
+            int roomZ = room.Z + z;
+
+            gridCellIds[minX, roomZ] = eastWallId;
+            gridCellIds[maxX, roomZ] = westWallId;
+        }
+    }
+
+    private void ConnectRooms(GridRoom roomA, GridRoom roomB)
+    {
+        if (roomA.X != roomB.X)
+        {
+            if (roomA.X < roomB.X)
+            {
+                ConnectHorizontally(roomA, roomB);
+            }
+            else
+            {
+                ConnectHorizontally(roomB, roomA);
+            }
+        }
+        else
+        {
+            if (roomA.Z < roomB.Z)
+            {
+                ConnectVertically(roomA, roomB);
+            }
+            else
+            {
+                ConnectVertically(roomB, roomA);
+            }
+        }
+    }
+
+    private void ConnectHorizontally(GridRoom roomA, GridRoom roomB)
+    {
+        int roomAX = roomA.X + roomA.Width;
+        int roomAZ = roomA.Z + Mathf.RoundToInt(roomA.Height / 2);
+
+        gridCellIds[roomAX, roomAZ - 1] = topLeftCornerId;
+        gridCellIds[roomAX, roomAZ] = walkableId;
+        gridCellIds[roomAX, roomAZ + 1] = walkableId;
+        gridCellIds[roomAX, roomAZ + 2] = bottomLeftCornerId;
+
+        int roomBX = roomB.X;
+        int roomBZ = roomB.Z + Mathf.RoundToInt(roomB.Height / 2);
+
+        gridCellIds[roomBX, roomBZ - 1] = topRightCornerId;
+        gridCellIds[roomBX, roomBZ] = walkableId;
+        gridCellIds[roomBX, roomBZ + 1] = walkableId;
+        gridCellIds[roomBX, roomBZ + 2] = bottomLeftCornerId;
+    }
+
+
+    private void ConnectVertically(GridRoom roomA, GridRoom roomB)
+    {
+        int roomAX = roomA.X + Mathf.RoundToInt(roomA.Width / 2);
+        int roomAZ = roomA.Z + roomA.Height;
+
+        gridCellIds[roomAX - 1, roomAZ] = topLeftCornerId;
+        gridCellIds[roomAX, roomAZ] = walkableId;
+        gridCellIds[roomAX + 1, roomAZ] = walkableId;
+        gridCellIds[roomAX + 2, roomAZ] = bottomLeftCornerId;
+
+        int roomBX = roomB.X + Mathf.RoundToInt(roomB.Width / 2);
+        int roomBZ = roomB.Z;
+
+        gridCellIds[roomBX - 1, roomBZ] = topRightCornerId;
+        gridCellIds[roomBX, roomBZ] = walkableId;
+        gridCellIds[roomBX + 1, roomBZ] = walkableId;
+        gridCellIds[roomBX + 2, roomBZ] = bottomLeftCornerId;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     [SerializeField]
     private float cellSize = 50f;
 
@@ -23,11 +201,9 @@ public class RoomFirstGridDungeonGenerator : AbstractDungeonGenerator
     [SerializeField] private CorridorRoom corridorPrefab;
 
     private Dictionary<int, GameObject> idToPrefabKVP = new Dictionary<int, GameObject>();
-
-    private const int padding = 2;
-    private const int lenghtOffset = 2;
-
     private readonly List<GridRoom> rooms = new List<GridRoom>();
+
+    //For Clearing purposes
     [SerializeField] private readonly List<GameObject> spawnedObjects = new List<GameObject>();
 
     private int[,] gridCellIds;
@@ -144,6 +320,70 @@ public class RoomFirstGridDungeonGenerator : AbstractDungeonGenerator
         }
     }
 
+    private void SpawnWalls()
+    {
+        spawnedObjects.Clear();
+
+        int xCells = gridCellIds.GetLength(0);
+        int zCells = gridCellIds.GetLength(1);
+
+        for (int z = 0; z < zCells; z++)
+        {
+            for (int x = 0; x < xCells; x++)
+            {
+                int id = gridCellIds[x, z];
+
+                if (!idToPrefabKVP.TryGetValue(id, out GameObject prefab) && id != 0)
+                {
+                    Debug.LogError($"Prefab doesn't exist for the given ID: {id}");
+                    continue;
+                }
+
+                GameObject spawnedObject = null;
+                switch (id)
+                {
+                    //Spawn prefabs based on ID
+                    case walkableId:
+                        // Do nothing
+                        break;
+                    case topLeftCornerId:
+                        spawnedObject = Instantiate(prefab, Grid.ToWorldPosition(x, z, cellSize), Quaternion.identity, transform);
+                        break;
+                    case topRightCornerId:
+                        spawnedObject = Instantiate(prefab, Grid.ToWorldPosition(x, z, cellSize), Quaternion.Euler(0, -90, 0), transform);
+                        break;
+                    case bottomLeftCornerId:
+                        spawnedObject = Instantiate(prefab, Grid.ToWorldPosition(x, z, cellSize), Quaternion.Euler(0, 90, 0), transform);
+                        break;
+                    case bottomRightCornerId:
+                        spawnedObject = Instantiate(prefab, Grid.ToWorldPosition(x, z, cellSize), Quaternion.Euler(0, -180, 0), transform);
+                        break;
+                    case northWallId:
+                        spawnedObject = Instantiate(prefab, Grid.ToWorldPosition(x, z, cellSize), Quaternion.identity, transform);
+                        break;
+                    case southWallId:
+                        spawnedObject = Instantiate(prefab, Grid.ToWorldPosition(x, z, cellSize), Quaternion.identity, transform);
+                        break;
+                    case eastWallId:
+                        spawnedObject = Instantiate(prefab, Grid.ToWorldPosition(x, z, cellSize), Quaternion.Euler(0, 90, 0), transform);
+                        break;
+                    case westWallId:
+                        spawnedObject = Instantiate(prefab, Grid.ToWorldPosition(x, z, cellSize), Quaternion.Euler(0, 90, 0), transform);
+                        break;
+                    default:
+                        break;
+                }
+
+                if (spawnedObject == null)
+                {
+                    continue;
+                }
+
+                spawnedObjects.Add(spawnedObject);
+            }
+        }
+    }
+
     private void OnDrawGizmos()
     {
         if (gridCellIds == null)
@@ -194,72 +434,6 @@ public class RoomFirstGridDungeonGenerator : AbstractDungeonGenerator
                 Gizmos.DrawCube(position, new Vector3(0.9f * cellSize, 0.1f, 0.9f * cellSize));
             }
         }
-
-
         Gizmos.color = prevColor;
-    }
-
-    private void SpawnWalls()
-    {
-        spawnedObjects.Clear();
-
-        int xCells = gridCellIds.GetLength(0);
-        int zCells = gridCellIds.GetLength(1);
-
-        for (int z = 0; z < zCells; z++)
-        {
-            for (int x = 0; x < xCells; x++)
-            {
-                int id = gridCellIds[x, z]; 
-
-                if(!idToPrefabKVP.TryGetValue(id, out GameObject prefab) && id != 0)
-                {
-                    Debug.LogError($"Prefab doesn't exist for the given ID: {id}");
-                    continue;
-                }
-
-                GameObject spawnedObject = null;
-                switch (id)
-                {
-                    //Spawn prefabs based on ID
-                    case walkableId:
-                        // Do nothing
-                        break;
-                    case topLeftCornerId:
-                        spawnedObject = Instantiate(prefab, Grid.ToWorldPosition(x, z, cellSize), Quaternion.identity, transform);
-                        break;
-                    case topRightCornerId:
-                        spawnedObject = Instantiate(prefab, Grid.ToWorldPosition(x, z, cellSize), Quaternion.Euler(0, -90, 0), transform);
-                        break;
-                    case bottomLeftCornerId:
-                        spawnedObject = Instantiate(prefab, Grid.ToWorldPosition(x, z, cellSize), Quaternion.Euler(0, 90, 0), transform);
-                        break;
-                    case bottomRightCornerId:
-                        spawnedObject = Instantiate(prefab, Grid.ToWorldPosition(x, z, cellSize), Quaternion.Euler(0, -180, 0), transform);
-                        break;
-                    case northWallId:
-                        spawnedObject = Instantiate(prefab, Grid.ToWorldPosition(x, z, cellSize), Quaternion.identity, transform);
-                        break;
-                    case southWallId:
-                        spawnedObject = Instantiate(prefab, Grid.ToWorldPosition(x, z, cellSize), Quaternion.identity, transform);
-                        break;
-                    case eastWallId:
-                        spawnedObject = Instantiate(prefab, Grid.ToWorldPosition(x, z, cellSize), Quaternion.Euler(0, 90, 0), transform);
-                        break;
-                    case westWallId:
-                        spawnedObject = Instantiate(prefab, Grid.ToWorldPosition(x, z, cellSize), Quaternion.Euler(0, 90, 0), transform);
-                        break;
-                    default:
-                        break;
-                }
-
-                if(spawnedObject == null)
-                {
-                    continue;
-                }
-
-                spawnedObjects.Add(spawnedObject);
-            }
-        }
     }
 }

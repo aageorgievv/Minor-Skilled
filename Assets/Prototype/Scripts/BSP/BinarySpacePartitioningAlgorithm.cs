@@ -3,6 +3,39 @@ using UnityEngine;
 
 public static class BinarySpacePartitioningAlgorithm
 {
+    public static bool SplitRoom(GridRoom room, Queue<GridRoom> rooms, int minXWidth, int minZWidth)
+    {
+        if (Random.value < 0.5f)
+        {
+            return SplitHorizontally(room, minXWidth, rooms);
+        }
+        else
+        {
+            return SplitVertically(room, minXWidth, rooms);
+        }
+    }
+
+    private static bool SplitVertically(GridRoom room, int minZWidth, Queue<GridRoom> rooms)
+    {
+
+        // if can't split, because of min width
+        // return false
+
+
+        return true;
+    }
+
+    private static bool SplitHorizontally(GridRoom room, int minXWidth, Queue<GridRoom> rooms)
+    {
+
+        // if can't split, because of min width
+        // return false
+
+
+        return true;
+    }
+
+
     public static List<BoundsInt> BinarySpacePartitioning(BoundsInt spaceToSplit, int minXWidth, int minZWidth)
     {
         Queue<BoundsInt> roomsQueue = new Queue<BoundsInt>();
