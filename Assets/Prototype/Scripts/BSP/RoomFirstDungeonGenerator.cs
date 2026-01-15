@@ -54,39 +54,6 @@ public class RoomFirstDungeonGenerator : AbstractDungeonGenerator
         ConnectRooms(rooms);
     }
 
-    private void DebugSpawnBspPartitions(List<BoundsInt> partitions)
-    {
-        GameObject parent = GameObject.Find("BSP_Debug") ?? new GameObject("BSP_Debug");
-
-        // Clean previous debug meshes
-        for (int i = parent.transform.childCount - 1; i >= 0; i--)
-        {
-            DestroyImmediate(parent.transform.GetChild(i).gameObject);
-        }
-
-        for (int i = 0; i < partitions.Count; i++)
-        {
-            BoundsInt b = partitions[i];
-
-            // World-space center
-            Vector3 center = new Vector3(b.center.x, 0f, b.center.z);
-
-            Vector3 size = new Vector3(b.size.x, 0.1f, b.size.z);
-
-            GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            cube.transform.SetParent(parent.transform);
-            cube.transform.position = center;
-            cube.transform.localScale = size;
-
-            var renderer = cube.GetComponent<Renderer>();
-            if (renderer != null)
-            {
-                renderer.material = new Material(renderer.sharedMaterial);
-                renderer.material.color = Random.ColorHSV(0f, 1f, 0.7f, 1f, 0.7f, 1f);
-            }
-        }
-    }
-
     private void ConnectRooms(List<DungeonRoom> rooms)
     {
         if (rooms == null || rooms.Count == 0)
@@ -243,5 +210,38 @@ public class RoomFirstDungeonGenerator : AbstractDungeonGenerator
     protected override void DeleteProceduralGeneration()
     {
         throw new System.NotImplementedException();
+    }
+
+    private void DebugSpawnBspPartitions(List<BoundsInt> partitions)
+    {
+        GameObject parent = GameObject.Find("BSP_Debug") ?? new GameObject("BSP_Debug");
+
+        // Clean previous debug meshes
+        for (int i = parent.transform.childCount - 1; i >= 0; i--)
+        {
+            DestroyImmediate(parent.transform.GetChild(i).gameObject);
+        }
+
+        for (int i = 0; i < partitions.Count; i++)
+        {
+            BoundsInt b = partitions[i];
+
+            // World-space center
+            Vector3 center = new Vector3(b.center.x, 0f, b.center.z);
+
+            Vector3 size = new Vector3(b.size.x, 0.1f, b.size.z);
+
+            GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            cube.transform.SetParent(parent.transform);
+            cube.transform.position = center;
+            cube.transform.localScale = size;
+
+            var renderer = cube.GetComponent<Renderer>();
+            if (renderer != null)
+            {
+                renderer.material = new Material(renderer.sharedMaterial);
+                renderer.material.color = Random.ColorHSV(0f, 1f, 0.7f, 1f, 0.7f, 1f);
+            }
+        }
     }
 }
