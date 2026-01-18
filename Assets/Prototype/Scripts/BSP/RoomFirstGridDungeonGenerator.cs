@@ -36,6 +36,7 @@ public class RoomFirstGridDungeonGenerator : AbstractDungeonGenerator
     private const int southWallId = 6;
     private const int eastWallId = 7;
     private const int westWallId = 8;
+    private const int corridorWalkableId = 9;
 
     protected override void RunProceduralGeneration()
     {
@@ -118,41 +119,30 @@ public class RoomFirstGridDungeonGenerator : AbstractDungeonGenerator
 
             if (x == 0) // bottom and top left corners
             {
-                gridCellIds[roomX, roomMinZ] = topLeftCornerId;
-                gridCellIds[roomX, roomMaxZ] = bottomLeftCornerId;
+
+                SetIfNotCorner(roomX, roomMinZ, topLeftCornerId);
+                SetIfNotCorner(roomX, roomMaxZ, bottomLeftCornerId);
             }
             else if (x == room.Width - 1) // bottom and top right corners
             {
-                gridCellIds[roomX, roomMinZ] = topRightCornerId;
-                gridCellIds[roomX, roomMaxZ] = bottomRightCornerId;
+                SetIfNotCorner(roomX, roomMinZ, topRightCornerId);
+                SetIfNotCorner(roomX, roomMaxZ, bottomRightCornerId);
             }
             else // put north and south walls
             {
-                gridCellIds[roomX, roomMinZ] = northWallId;
-                gridCellIds[roomX, roomMaxZ] = southWallId;
+                SetIfNotCorner(roomX, roomMinZ, northWallId);
+                SetIfNotCorner(roomX, roomMaxZ, southWallId);
             }
         }
 
         for (int z = 0; z < room.Height; z++)
         {
-            // Corners are already done
-            if (z == 0)
-            {
-                continue;
-            }
-
-            // Corners are already done
-            if (z == room.Height - 1)
-            {
-                continue;
-            }
-
             int minX = room.X;
             int maxX = room.X + room.Width - 1;
             int roomZ = room.Z + z;
 
-            gridCellIds[minX, roomZ] = eastWallId;
-            gridCellIds[maxX, roomZ] = westWallId;
+            SetIfNotCorner(minX, roomZ, eastWallId);
+            SetIfNotCorner(maxX, roomZ, westWallId);
         }
     }
 
@@ -185,19 +175,19 @@ public class RoomFirstGridDungeonGenerator : AbstractDungeonGenerator
     private void ConnectHorizontally(GridRoom roomA, GridRoom roomB)
     {
         int roomAX = roomA.X + roomA.Width - 1;
-        int roomAZ = roomA.Z + (roomA.Height / 2);
+        int roomAZ = roomA.Z + 4;
 
         gridCellIds[roomAX, roomAZ - 1] = bottomLeftCornerId;
-        gridCellIds[roomAX, roomAZ] = walkableId;
-        gridCellIds[roomAX, roomAZ + 1] = walkableId;
+        gridCellIds[roomAX, roomAZ] = corridorWalkableId;
+        gridCellIds[roomAX, roomAZ + 1] = corridorWalkableId;
         gridCellIds[roomAX, roomAZ + 2] = topLeftCornerId;
 
         int roomBX = roomB.X;
-        int roomBZ = roomB.Z + (roomB.Height / 2);
+        int roomBZ = roomB.Z + 4;
 
         gridCellIds[roomBX, roomBZ - 1] = bottomRightCornerId;
-        gridCellIds[roomBX, roomBZ] = walkableId;
-        gridCellIds[roomBX, roomBZ + 1] = walkableId;
+        gridCellIds[roomBX, roomBZ] = corridorWalkableId;
+        gridCellIds[roomBX, roomBZ + 1] = corridorWalkableId;
         gridCellIds[roomBX, roomBZ + 2] = topRightCornerId;
         Debug.Log("H");
     }
@@ -205,20 +195,20 @@ public class RoomFirstGridDungeonGenerator : AbstractDungeonGenerator
 
     private void ConnectVertically(GridRoom roomA, GridRoom roomB)
     {
-        int roomAX = roomA.X + (roomA.Width / 2);
+        int roomAX = roomA.X + 4;
         int roomAZ = roomA.Z + roomA.Height - 1;
 
         gridCellIds[roomAX - 1, roomAZ] = topRightCornerId;
-        gridCellIds[roomAX, roomAZ] = walkableId;
-        gridCellIds[roomAX + 1, roomAZ] = walkableId;
+        gridCellIds[roomAX, roomAZ] = corridorWalkableId;
+        gridCellIds[roomAX + 1, roomAZ] = corridorWalkableId;
         gridCellIds[roomAX + 2, roomAZ] = topLeftCornerId;
 
-        int roomBX = roomB.X + (roomB.Width / 2);
+        int roomBX = roomB.X + 4;
         int roomBZ = roomB.Z;
 
         gridCellIds[roomBX - 1, roomBZ] = bottomRightCornerId;
-        gridCellIds[roomBX, roomBZ] = walkableId;
-        gridCellIds[roomBX + 1, roomBZ] = walkableId;
+        gridCellIds[roomBX, roomBZ] = corridorWalkableId;
+        gridCellIds[roomBX + 1, roomBZ] = corridorWalkableId;
         gridCellIds[roomBX + 2, roomBZ] = bottomLeftCornerId;
         Debug.Log("V");
     }
@@ -236,7 +226,7 @@ public class RoomFirstGridDungeonGenerator : AbstractDungeonGenerator
             {
                 int id = gridCellIds[x, z];
 
-                if (!idToPrefabKVP.TryGetValue(id, out GameObject prefab) && id != 0)
+                if (!idToPrefabKVP.TryGetValue(id, out GameObject prefab) && id != 0 && id != 9)
                 {
                     Debug.LogError($"Prefab doesn't exist for the given ID: {id}");
                     continue;
@@ -247,6 +237,7 @@ public class RoomFirstGridDungeonGenerator : AbstractDungeonGenerator
                 {
                     //Spawn prefabs based on ID
                     case walkableId:
+                    case corridorWalkableId:
                         // Do nothing
                         break;
                     case topLeftCornerId:
@@ -287,6 +278,22 @@ public class RoomFirstGridDungeonGenerator : AbstractDungeonGenerator
         }
     }
 
+    private bool IsCornerId(int id)
+    {
+        return id == topLeftCornerId
+            || id == topRightCornerId
+            || id == bottomLeftCornerId
+            || id == bottomRightCornerId
+            || id == corridorWalkableId;
+    }
+
+    private void SetIfNotCorner(int x, int z, int newId)
+    {
+        int existing = gridCellIds[x, z];
+        if (IsCornerId(existing)) return;   // keep the corner
+        gridCellIds[x, z] = newId;
+    }
+
     private void OnDrawGizmos()
     {
         if (gridCellIds == null)
@@ -313,6 +320,7 @@ public class RoomFirstGridDungeonGenerator : AbstractDungeonGenerator
                 switch (id)
                 {
                     case walkableId:
+                    case corridorWalkableId:
                         color = Color.white;
                         break;
                     case topLeftCornerId:
