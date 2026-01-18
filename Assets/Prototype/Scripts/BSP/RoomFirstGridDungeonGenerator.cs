@@ -89,14 +89,14 @@ public class RoomFirstGridDungeonGenerator : AbstractDungeonGenerator
 
             if (!rooms.TryDequeue(out GridRoom roomToSplit))
             {
-                Debug.LogError($"No rooms found to split");
+                //Debug.LogError($"No rooms found to split");
                 break;
             }
 
             if (!BinarySpacePartitioningAlgorithm.SplitRoom(roomToSplit, minRoomX, minRoomZ, out GridRoom roomA, out GridRoom roomB))
             {
                 // cannot split anymore
-                break;
+                continue;
             }
 
             // add walls to the rooms
@@ -175,42 +175,53 @@ public class RoomFirstGridDungeonGenerator : AbstractDungeonGenerator
     private void ConnectHorizontally(GridRoom roomA, GridRoom roomB)
     {
         int roomAX = roomA.X + roomA.Width - 1;
-        int roomAZ = roomA.Z + 4;
+        int roomAZ = roomA.Z + Mathf.RoundToInt(roomA.Height / 8);
 
-        gridCellIds[roomAX, roomAZ - 1] = bottomLeftCornerId;
-        gridCellIds[roomAX, roomAZ] = corridorWalkableId;
-        gridCellIds[roomAX, roomAZ + 1] = corridorWalkableId;
-        gridCellIds[roomAX, roomAZ + 2] = topLeftCornerId;
+        SetRoom(roomAX, roomAZ - 1, bottomLeftCornerId);
+        SetRoom(roomAX, roomAZ, corridorWalkableId);
+        SetRoom(roomAX, roomAZ + 1, corridorWalkableId);
+        SetRoom(roomAX, roomAZ + 2, topLeftCornerId);
 
         int roomBX = roomB.X;
-        int roomBZ = roomB.Z + 4;
+        int roomBZ = roomB.Z + Mathf.RoundToInt(roomB.Height / 8);
 
-        gridCellIds[roomBX, roomBZ - 1] = bottomRightCornerId;
-        gridCellIds[roomBX, roomBZ] = corridorWalkableId;
-        gridCellIds[roomBX, roomBZ + 1] = corridorWalkableId;
-        gridCellIds[roomBX, roomBZ + 2] = topRightCornerId;
+        SetRoom(roomBX, roomBZ - 1, bottomRightCornerId);
+        SetRoom(roomBX, roomBZ, corridorWalkableId);
+        SetRoom(roomBX, roomBZ + 1, corridorWalkableId);
+        SetRoom(roomBX, roomBZ + 2, topRightCornerId);
+
         Debug.Log("H");
     }
 
 
     private void ConnectVertically(GridRoom roomA, GridRoom roomB)
     {
-        int roomAX = roomA.X + 4;
+        int roomAX = roomA.X + Mathf.RoundToInt(roomA.Width / 8);
         int roomAZ = roomA.Z + roomA.Height - 1;
 
-        gridCellIds[roomAX - 1, roomAZ] = topRightCornerId;
-        gridCellIds[roomAX, roomAZ] = corridorWalkableId;
-        gridCellIds[roomAX + 1, roomAZ] = corridorWalkableId;
-        gridCellIds[roomAX + 2, roomAZ] = topLeftCornerId;
+        SetRoom(roomAX - 1, roomAZ, topRightCornerId);
+        SetRoom(roomAX, roomAZ, corridorWalkableId);
+        SetRoom(roomAX + 1, roomAZ, corridorWalkableId);
+        SetRoom(roomAX + 2, roomAZ, topLeftCornerId);
 
-        int roomBX = roomB.X + 4;
+        int roomBX = roomB.X + Mathf.RoundToInt(roomB.Width / 8);
         int roomBZ = roomB.Z;
 
-        gridCellIds[roomBX - 1, roomBZ] = bottomRightCornerId;
-        gridCellIds[roomBX, roomBZ] = corridorWalkableId;
-        gridCellIds[roomBX + 1, roomBZ] = corridorWalkableId;
-        gridCellIds[roomBX + 2, roomBZ] = bottomLeftCornerId;
+        SetRoom(roomBX - 1, roomBZ, bottomRightCornerId);
+        SetRoom(roomBX, roomBZ, corridorWalkableId);
+        SetRoom(roomBX + 1, roomBZ, corridorWalkableId);
+        SetRoom(roomBX + 2, roomBZ, bottomLeftCornerId);
         Debug.Log("V");
+    }
+
+    private void SetRoom(int x, int y, int roomId)
+    {
+        if (x < 0 || x >= gridCellIds.GetLength(0) || y < 0 ||  y >= gridCellIds.GetLength(1))
+        {
+            return;
+        }
+
+        gridCellIds[x, y] = roomId;
     }
 
     private void SpawnWalls()

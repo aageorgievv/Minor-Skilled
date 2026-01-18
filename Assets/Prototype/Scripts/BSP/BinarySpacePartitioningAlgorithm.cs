@@ -17,14 +17,22 @@ public static class BinarySpacePartitioningAlgorithm
             return false;
         }
 
-        if (Random.value < 0.5f)
-        {
-            return SplitHorizontally(room, minXWidth, out roomA, out roomB);
-        }
-        else
+        if (!SplitHorizontally(room, minXWidth, out roomA, out roomB))
         {
             return SplitVertically(room, minZWidth, out roomA, out roomB);
         }
+
+        return true;
+
+
+        //if (Random.value < 0.5f)
+        //{
+        //    return SplitHorizontally(room, minXWidth, out roomA, out roomB);
+        //}
+        //else
+        //{
+        //    return SplitVertically(room, minZWidth, out roomA, out roomB);
+        //}
     }
 
     private static bool SplitVertically(GridRoom room, int minZWidth, out GridRoom roomA, out GridRoom roomB)
