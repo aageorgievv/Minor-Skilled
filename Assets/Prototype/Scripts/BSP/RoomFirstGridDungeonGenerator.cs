@@ -38,6 +38,9 @@ public class RoomFirstGridDungeonGenerator : AbstractDungeonGenerator
     private const int westWallId = 8;
     private const int corridorWalkableId = 9;
 
+
+    private const int corridorSideOffset = 6;
+
     protected override void RunProceduralGeneration()
     {
         DeleteProceduralGeneration();
@@ -78,6 +81,8 @@ public class RoomFirstGridDungeonGenerator : AbstractDungeonGenerator
         GridRoom dungeon = new GridRoom(0, 0, dungeonWidth, dungeonHeight);
         rooms.Enqueue(dungeon);
 
+        List<GridRoom> dungeonRooms = new List<GridRoom>();
+
         while (true)
         {
             //if (rooms.Count == 0)
@@ -95,6 +100,7 @@ public class RoomFirstGridDungeonGenerator : AbstractDungeonGenerator
 
             if (!BinarySpacePartitioningAlgorithm.SplitRoom(roomToSplit, minRoomX, minRoomZ, out GridRoom roomA, out GridRoom roomB))
             {
+                dungeonRooms.Add(roomToSplit);
                 // cannot split anymore
                 continue;
             }
@@ -107,7 +113,44 @@ public class RoomFirstGridDungeonGenerator : AbstractDungeonGenerator
             rooms.Enqueue(roomA);
             rooms.Enqueue(roomB);
         }
+
+
+        
+
     }
+
+    private void GenerateFurniture(List<GridRoom> dungeonRooms)
+    {
+        foreach (GridRoom room in dungeonRooms)
+        {
+
+            SplitUntilPossible(room, 2, 2, out GridRoom roomA, out GridRoom roomB);
+
+
+
+        }
+
+    }
+
+    private void SplitUntilPossible(GridRoom room, int minWidth, int minHeight, out GridRoom roomA, out GridRoom roomB)
+    {
+        if (!BinarySpacePartitioningAlgorithm.SplitRoom(room, minWidth, minHeight, out roomA, out roomB))
+        {
+            return;
+        }
+
+        SplitUntilPossible(roomA, minWidth, minHeight, out roomA, out roomB);
+    }
+
+
+    private void GenerateFurniture(GridRoom section)
+    {
+
+        Vector3 position = Grid.ToWorldPositionCenter(section.X, section.Z, cellSize);
+
+
+    }
+
 
     private void AddWalls(GridRoom room)
     {
@@ -174,8 +217,10 @@ public class RoomFirstGridDungeonGenerator : AbstractDungeonGenerator
 
     private void ConnectHorizontally(GridRoom roomA, GridRoom roomB)
     {
+        bool leftOrRight = Random.value > 0.5f;
+
         int roomAX = roomA.X + roomA.Width - 1;
-        int roomAZ = roomA.Z + Mathf.RoundToInt(roomA.Height / 8);
+        int roomAZ = leftOrRight ? roomA.Z + roomA.Height - corridorSideOffset : roomA.Z + corridorSideOffset;
 
         SetRoom(roomAX, roomAZ - 1, bottomLeftCornerId);
         SetRoom(roomAX, roomAZ, corridorWalkableId);
@@ -183,7 +228,7 @@ public class RoomFirstGridDungeonGenerator : AbstractDungeonGenerator
         SetRoom(roomAX, roomAZ + 2, topLeftCornerId);
 
         int roomBX = roomB.X;
-        int roomBZ = roomB.Z + Mathf.RoundToInt(roomB.Height / 8);
+        int roomBZ = leftOrRight ? roomB.Z + roomB.Height - corridorSideOffset : roomB.Z + corridorSideOffset;
 
         SetRoom(roomBX, roomBZ - 1, bottomRightCornerId);
         SetRoom(roomBX, roomBZ, corridorWalkableId);
@@ -196,7 +241,9 @@ public class RoomFirstGridDungeonGenerator : AbstractDungeonGenerator
 
     private void ConnectVertically(GridRoom roomA, GridRoom roomB)
     {
-        int roomAX = roomA.X + Mathf.RoundToInt(roomA.Width / 8);
+        bool leftOrRight = Random.value > 0.5f;
+
+        int roomAX = leftOrRight ? roomA.X + roomA.Width - corridorSideOffset : roomA.X + corridorSideOffset;
         int roomAZ = roomA.Z + roomA.Height - 1;
 
         SetRoom(roomAX - 1, roomAZ, topRightCornerId);
@@ -204,7 +251,7 @@ public class RoomFirstGridDungeonGenerator : AbstractDungeonGenerator
         SetRoom(roomAX + 1, roomAZ, corridorWalkableId);
         SetRoom(roomAX + 2, roomAZ, topLeftCornerId);
 
-        int roomBX = roomB.X + Mathf.RoundToInt(roomB.Width / 8);
+        int roomBX = leftOrRight ? roomB.X + roomB.Width - corridorSideOffset : roomB.X + corridorSideOffset;
         int roomBZ = roomB.Z;
 
         SetRoom(roomBX - 1, roomBZ, bottomRightCornerId);
@@ -288,6 +335,8 @@ public class RoomFirstGridDungeonGenerator : AbstractDungeonGenerator
             }
         }
     }
+
+
 
     private bool IsCornerId(int id)
     {
