@@ -85,13 +85,6 @@ public class RoomFirstGridDungeonGenerator : AbstractDungeonGenerator
 
         while (true)
         {
-            //if (rooms.Count == 0)
-            //{
-            //    Debug.LogError($"No rooms found to split");
-            //    break;
-            //}
-            //GridRoom roomToSplit2 = rooms.Dequeue();
-
             if (!rooms.TryDequeue(out GridRoom roomToSplit))
             {
                 //Debug.LogError($"No rooms found to split");
@@ -113,10 +106,6 @@ public class RoomFirstGridDungeonGenerator : AbstractDungeonGenerator
             rooms.Enqueue(roomA);
             rooms.Enqueue(roomB);
         }
-
-
-        
-
     }
 
     private void GenerateFurniture(List<GridRoom> dungeonRooms)
