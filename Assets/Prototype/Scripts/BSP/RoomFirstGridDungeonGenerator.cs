@@ -147,8 +147,6 @@ public class RoomFirstGridDungeonGenerator : AbstractDungeonGenerator
     {
 
         Vector3 position = Grid.ToWorldPositionCenter(section.X, section.Z, cellSize);
-
-
     }
 
 
@@ -234,8 +232,6 @@ public class RoomFirstGridDungeonGenerator : AbstractDungeonGenerator
         SetRoom(roomBX, roomBZ, corridorWalkableId);
         SetRoom(roomBX, roomBZ + 1, corridorWalkableId);
         SetRoom(roomBX, roomBZ + 2, topRightCornerId);
-
-        Debug.Log("H");
     }
 
 
@@ -258,7 +254,6 @@ public class RoomFirstGridDungeonGenerator : AbstractDungeonGenerator
         SetRoom(roomBX, roomBZ, corridorWalkableId);
         SetRoom(roomBX + 1, roomBZ, corridorWalkableId);
         SetRoom(roomBX + 2, roomBZ, bottomLeftCornerId);
-        Debug.Log("V");
     }
 
     private void SetRoom(int x, int y, int roomId)
