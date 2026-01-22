@@ -1,12 +1,12 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using static UnityEditor.PlayerSettings;
 using Color = UnityEngine.Color;
 
 
 public class RoomFirstGridDungeonGenerator : AbstractDungeonGenerator
 {
-    [SerializeField]
-    private float cellSize;
+    [SerializeField] GameObject prefab;
 
     [Header("Room Settings")]
     [SerializeField] private int minXWidth;
@@ -15,6 +15,7 @@ public class RoomFirstGridDungeonGenerator : AbstractDungeonGenerator
     [Header("Dungeon Settings")]
     [SerializeField] private int dungeonSizeX;
     [SerializeField] private int dungeonSizeZ;
+    [SerializeField] private float cellSize;
 
     [Header("Corridor Settings")]
     [SerializeField] private int corridorWidth = 2;
@@ -106,36 +107,46 @@ public class RoomFirstGridDungeonGenerator : AbstractDungeonGenerator
             rooms.Enqueue(roomA);
             rooms.Enqueue(roomB);
         }
+
+        GenerateFurniture(dungeonRooms);
     }
 
     private void GenerateFurniture(List<GridRoom> dungeonRooms)
     {
         foreach (GridRoom room in dungeonRooms)
         {
+            var sections = GetSections(room, 2, 2);
 
-            SplitUntilPossible(room, 2, 2, out GridRoom roomA, out GridRoom roomB);
-
-
-
+            foreach (var section in sections)
+            {
+                SpawnFurniture(section);
+            }
         }
-
     }
 
-    private void SplitUntilPossible(GridRoom room, int minWidth, int minHeight, out GridRoom roomA, out GridRoom roomB)
+    private List<GridRoom> GetSections(GridRoom room, int minW, int minH)
     {
-        if (!BinarySpacePartitioningAlgorithm.SplitRoom(room, minWidth, minHeight, out roomA, out roomB))
+        List<GridRoom> sections = new List<GridRoom>();
+
+        if (!BinarySpacePartitioningAlgorithm.SplitRoom(room, minW, minH, out var roomA, out var roomB))
         {
-            return;
+            sections.Add(room);
+            return sections;
         }
 
-        SplitUntilPossible(roomA, minWidth, minHeight, out roomA, out roomB);
+        sections.AddRange(GetSections(roomA, minW, minH));
+        sections.AddRange(GetSections(roomB, minW, minH));
+
+        return sections;
     }
 
 
-    private void GenerateFurniture(GridRoom section)
+    private void SpawnFurniture(GridRoom section)
     {
-
         Vector3 position = Grid.ToWorldPositionCenter(section.X, section.Z, cellSize);
+
+        GameObject gameObject = Instantiate(prefab, position, Quaternion.identity, transform);
+        spawnedObjects.Add(gameObject);
     }
 
 
