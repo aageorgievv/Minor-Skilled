@@ -1,7 +1,7 @@
 using UnityEngine;
 
-public interface ICanPlace
+public interface IFurnitureFootPrint
 {
-    public bool CanPlace(Vector3Int gridPosition, bool[,,] occupiedGridSpot);
-    public void Occupy(Vector3Int gridPosition, bool[,,] occupiedGridSpot);
+    Vector2Int FootPrint {  get; }
+    ESpawnLocation[] AllowedLocations { get; }
 }

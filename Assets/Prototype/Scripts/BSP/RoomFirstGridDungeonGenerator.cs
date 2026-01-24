@@ -6,16 +6,13 @@ using Color = UnityEngine.Color;
 
 public enum ESpawnLocation
 {
-    NorthWall,
-    EastWall,
-    SouthWall,
-    WestWall,
-    CenterRoom
+    Corner,
+    Wall,
+    Center
 }
 
 public class RoomFirstGridDungeonGenerator : AbstractDungeonGenerator
 {
-    [SerializeField] GameObject prefab;
 
     [Header("Room Settings")]
     [SerializeField] private int minXWidth;
@@ -32,9 +29,6 @@ public class RoomFirstGridDungeonGenerator : AbstractDungeonGenerator
 
     private Dictionary<int, GameObject> idToPrefabKVP = new Dictionary<int, GameObject>();
 
-    //For Clearing purposes
-    [SerializeField] private readonly List<GameObject> spawnedObjects = new List<GameObject>();
-
     private int[,] gridCellIds;
 
     private const int walkableId = 0;
@@ -48,6 +42,10 @@ public class RoomFirstGridDungeonGenerator : AbstractDungeonGenerator
     private const int westWallId = 8;
     private const int corridorWalkableId = 9;
 
+    //Furniturte Ids
+    private const int bedId = 10;
+
+    private int nextFurnitureId;
 
     private const int corridorSideOffset = 6;
 
@@ -65,6 +63,10 @@ public class RoomFirstGridDungeonGenerator : AbstractDungeonGenerator
         idToPrefabKVP.Add(bottomLeftCornerId, cornerPrefab);
         idToPrefabKVP.Add(bottomRightCornerId, cornerPrefab);
 
+        //Furniture
+        idToPrefabKVP.Add(bedId, bedPrefab);
+
+
         GenerateDungeon(dungeonSizeX, dungeonSizeZ, minXWidth, minZWidth);
 
         SpawnWalls();
@@ -72,14 +74,11 @@ public class RoomFirstGridDungeonGenerator : AbstractDungeonGenerator
     protected override void DeleteProceduralGeneration()
     {
         gridCellIds = null;
-
-        for (int i = 0; i < spawnedObjects.Count; i++)
+        for (int i = transform.childCount - 1; i >= 0; i--)
         {
-            GameObject spawnedObject = spawnedObjects[i];
-            DestroyImmediate(spawnedObject);
+            var child = transform.GetChild(i);
+            DestroyImmediate(child.gameObject);
         }
-
-        spawnedObjects.Clear();
     }
 
     public void GenerateDungeon(int dungeonWidth, int dungeonHeight, int minRoomX, int minRoomZ)
@@ -124,6 +123,7 @@ public class RoomFirstGridDungeonGenerator : AbstractDungeonGenerator
     {
         foreach (GridRoom room in dungeonRooms)
         {
+            //avoiding the walls when s
             GridRoom divisibleRoom = new GridRoom(room.X + 1, room.Z + 1, room.Width - 2, room.Height - 2);
             var sections = GetSections(divisibleRoom, 2, 2);
 
@@ -150,149 +150,235 @@ public class RoomFirstGridDungeonGenerator : AbstractDungeonGenerator
         return sections;
     }
 
-    private void SpawnFurniture(GridRoom section)
+/*    private void SpawnFurniture(GridRoom section)
     {
         // prefab has some script for the sizes
+        *//*        int sizeX = 2;
+                int sizeZ = 1;
+                ESpawnLocation[] spawnLocations = (ESpawnLocation[])Enum.GetValues(typeof(ESpawnLocation));
+                int idx = UnityEngine.Random.Range(0, spawnLocations.Length);
+                ESpawnLocation wallDirection = spawnLocations[idx];
 
-        //int sizeX = 2;
-        //int sizeZ = 1;
-        //ESpawnLocation[] spawnLocations = (ESpawnLocation[])Enum.GetValues(typeof(ESpawnLocation));
-        //int idx = UnityEngine.Random.Range(0, spawnLocations.Length);
-        //ESpawnLocation wallDirection = spawnLocations[idx];
+                for (int z = 0; z < section.Height; z++)
+                {
+                    for (int x = 0; x < section.Width; x++)
+                    {
+                        if (HasFurniture(x, z))
+                        {
+                            continue;
+                        }
 
-        //for (int z = 0; z < section.Height; z++)
-        //{
-        //    for (int x = 0; x < section.Width; x++)
-        //    {
-        //        if (HasFurniture(x, z))
-        //        {
-        //            continue;
-        //        }
+                        switch (wallDirection)
+                        {
+                            case ESpawnLocation.NorthWall:
+                                if (!IsWall(x, z - 1))
+                                {
+                                    continue;
+                                }
 
-        //        switch (wallDirection)
-        //        {
-        //            case ESpawnLocation.NorthWall:
-        //                if (!IsWall(x, z - 1))
-        //                {
-        //                    continue;
-        //                }
+                                break;
+                            case ESpawnLocation.EastWall:
+                                if (!IsWall(x + 1, z))
+                                {
+                                    continue;
+                                }
 
-        //                break;
-        //            case ESpawnLocation.EastWall:
-        //                if (!IsWall(x + 1, z))
-        //                {
-        //                    continue;
-        //                }
+                                break;
+                            case ESpawnLocation.SouthWall:
+                                if (!IsWall(x, z + 1))
+                                {
+                                    continue;
+                                }
 
-        //                break;
-        //            case ESpawnLocation.SouthWall:
-        //                if (!IsWall(x, z + 1))
-        //                {
-        //                    continue;
-        //                }
+                                break;
+                            case ESpawnLocation.WestWall:
+                                if (!IsWall(x - 1, z))
+                                {
+                                    continue;
+                                }
 
-        //                break;
-        //            case ESpawnLocation.WestWall:
-        //                if (!IsWall(x - 1, z))
-        //                {
-        //                    continue;
-        //                }
+                                break;
+                            case ESpawnLocation.CenterRoom:
+                                if (!IsWall(x, z - 1) ||
+                                    !IsWall(x + 1, z) ||
+                                    !IsWall(x, z + 1) ||
+                                    !IsWall(x - 1, z))
+                                {
+                                    continue;
+                                }
 
-        //                break;
-        //            case ESpawnLocation.CenterRoom:
-        //                if (!IsWall(x, z - 1) ||
-        //                    !IsWall(x + 1, z) ||
-        //                    !IsWall(x, z + 1) ||
-        //                    !IsWall(x - 1, z))
-        //                {
-        //                    continue;
-        //                }
+                                break;
 
-        //                break;
-        //            default: throw new NotImplementedException(wallDirection.ToString());
-        //        }
+                        }
 
-        //        bool spawnHorizontally = sizeX <= section.Width;
-        //        bool spawnVertically = sizeZ <= section.Height;
+                        bool spawnHorizontally = sizeX <= section.Width;
+                        bool spawnVertically = sizeZ <= section.Height;
 
-        //        if (!spawnHorizontally || !spawnVertically)
-        //        {
-        //            // not enough space error
-        //            return;
-        //        }
+                        if (!spawnHorizontally || !spawnVertically)
+                        {
+                            // not enough space error
+                            return;
+                        }
 
-        //        int X = UnityEngine.Random.Range(section.X, section.X + section.Width - sizeX);
-        //        int Z = UnityEngine.Random.Range(section.Z, section.Z + section.Height - sizeZ);
+                        int X = UnityEngine.Random.Range(section.X, section.X + section.Width - sizeX);
+                        int Z = UnityEngine.Random.Range(section.Z, section.Z + section.Height - sizeZ);
 
-        //        Quaternion rotation = Quaternion.identity;
-        //        if (spawnVertically)
-        //        {
-        //            rotation = Quaternion.Euler(0, 90, 0);
-        //        }
+                        Quaternion rotation = Quaternion.identity;
+                        if (spawnVertically)
+                        {
+                            rotation = Quaternion.Euler(0, 90, 0);
+                        }
 
 
-        //        //gridCellIds[X, Z] = whateverYouSpawnedId;
-        //        return;
-        //    }
-        //}
+                        //gridCellIds[X, Z] = whateverYouSpawnedId;
+                        return;
+                    }
+                }*//*
+
 
         Vector3 position = Grid.ToWorldPositionCenter(section.X, section.Z, cellSize);
 
         GameObject gameObject = Instantiate(prefab, position, Quaternion.identity, transform);
         spawnedObjects.Add(gameObject);
-    }
+    }*/
 
-    private bool IsCorner(int x, int z)
+    /*    private bool IsCorner(int x, int z)
+        {
+            int northCellId = gridCellIds[x, z - 1];
+            int eastCellId = gridCellIds[x + 1, z];
+            int southCellId = gridCellIds[x, z + 1];
+            int westCellId = gridCellIds[x - 1, z];
+
+            // is north-east
+            if (northCellId == northWallId &&
+                eastCellId == eastWallId)
+            {
+                return true;
+            }
+
+            // south-east
+            if (eastCellId == eastWallId &&
+                southCellId == southWallId)
+            {
+                return true;
+            }
+
+            // south-west
+            if (southCellId == southWallId &&
+                westCellId == westWallId)
+            {
+                return true;
+            }
+
+            // north-west
+            if (westCellId == westWallId &&
+                northCellId == northWallId)
+            {
+                return true;
+            }
+
+            return false;
+        }*/
+
+
+    private void SpawnFurniture(GridRoom section)
     {
-        int northCellId = gridCellIds[x, z - 1];
-        int eastCellId = gridCellIds[x + 1, z];
-        int southCellId = gridCellIds[x, z + 1];
-        int westCellId = gridCellIds[x - 1, z];
+        GameObject prefabToSpawn = bedPrefab; 
+        IFurnitureFootPrint footprintComp = prefabToSpawn.GetComponent<IFurnitureFootPrint>();
 
-        // is north-east
-        if (northCellId == northWallId &&
-            eastCellId == eastWallId)
+        if (footprintComp == null)
         {
-            return true;
-        }
-        
-        // south-east
-        if (eastCellId == eastWallId &&
-            southCellId == southWallId)
-        {
-            return true;
-        }  
-
-        // south-west
-        if (southCellId == southWallId &&
-            westCellId == westWallId)
-        {
-            return true;
+            Debug.LogError($"{prefabToSpawn.name} missing IFurnitureFootprint");
+            return;
         }
 
-        // north-west
-        if (westCellId == westWallId &&
-            northCellId == northWallId)
+        List<Placement> placementList = CollectPlacements(section);
+        HashSet<ESpawnLocation> allowed = new HashSet<ESpawnLocation>(footprintComp.AllowedLocations);
+        placementList.RemoveAll(p => !allowed.Contains(p.Type));
+
+        for (int i = 0; i < placementList.Count; i++)
         {
-            return true;
+            int j = UnityEngine.Random.Range(i, placementList.Count);
+            (placementList[i], placementList[j]) = (placementList[j], placementList[i]);
         }
 
-        return false;
+        foreach (var placement in placementList)
+        {
+            if (!CanPlaceFootprint(placement.Cell, footprintComp.FootPrint, placement.Rot))
+            {
+                continue;
+            }
+
+            Vector3 world = Grid.ToWorldPositionCenter(placement.Cell.x, placement.Cell.y, cellSize);
+            GameObject gameObject = Instantiate(prefabToSpawn, world, placement.Rot, transform);
+
+            int id = bedId + nextFurnitureId++;
+            MarkFurniture(placement.Cell, footprintComp.FootPrint, placement.Rot, id);
+            return;
+        }
     }
 
-    private bool IsWall(int x, int z) {
-        var cellId = gridCellIds[x, z];
-
-        return cellId == northWallId ||
-               cellId == eastWallId ||
-               cellId == southWallId ||
-               cellId == westWallId;
-    }
-
-    private bool HasFurniture(int x, int z)
+    private List<Placement> CollectPlacements(GridRoom section)
     {
-        // TODO: Implement this
-        return true;
+        var results = new List<Placement>();
+
+        for (int z = section.Z; z < section.Z + section.Height; z++)
+        {
+            for (int x = section.X; x < section.X + section.Width; x++)
+            {
+                if (!IsWalkable(x, z))
+                {
+                    continue;
+                }
+
+                if (HasFurniture(x, z))
+                {
+                    continue;
+                }
+
+                bool north = IsWallCell(x, z - 1);
+                bool east = IsWallCell(x + 1, z);
+                bool south = IsWallCell(x, z + 1);
+                bool west = IsWallCell(x - 1, z);
+
+                int wallCount = (north ? 1 : 0) + (east ? 1 : 0) + (south ? 1 : 0) + (west ? 1 : 0);
+
+                if (wallCount >= 2)
+                {
+                    if (north && east)
+                    {
+                        results.Add(new Placement { Cell = new(x, z), Rot = Quaternion.Euler(0, 180, 0), Type = ESpawnLocation.Corner });
+                    }
+                    else if (east && south)
+                    {
+                        results.Add(new Placement { Cell = new(x, z), Rot = Quaternion.Euler(0, -90, 0), Type = ESpawnLocation.Corner });
+                    }
+                    else if (south && west)
+                    {
+                        results.Add(new Placement { Cell = new(x, z), Rot = Quaternion.Euler(0, 0, 0), Type = ESpawnLocation.Corner });
+                    }
+                    else if (west && north)
+                    {
+                        results.Add(new Placement { Cell = new(x, z), Rot = Quaternion.Euler(0, 90, 0), Type = ESpawnLocation.Corner });
+                    }
+                }
+
+                if (wallCount == 1)
+                {
+                    Quaternion rot = north ? Quaternion.Euler(0, 180, 0) : east ? Quaternion.Euler(0, -90, 0) : south ? Quaternion.Euler(0, 0, 0) : Quaternion.Euler(0, 90, 0);
+
+                    results.Add(new Placement { Cell = new(x, z), Rot = rot, Type = ESpawnLocation.Wall });
+                    continue;
+                }
+
+                if (wallCount == 0)
+                {
+                    results.Add(new Placement { Cell = new(x, z), Rot = Quaternion.identity, Type = ESpawnLocation.Center });
+                }
+            }
+        }
+
+        return results;
     }
 
 
@@ -404,7 +490,7 @@ public class RoomFirstGridDungeonGenerator : AbstractDungeonGenerator
 
     private void SetRoom(int x, int y, int roomId)
     {
-        if (x < 0 || x >= gridCellIds.GetLength(0) || y < 0 ||  y >= gridCellIds.GetLength(1))
+        if (x < 0 || x >= gridCellIds.GetLength(0) || y < 0 || y >= gridCellIds.GetLength(1))
         {
             return;
         }
@@ -414,8 +500,6 @@ public class RoomFirstGridDungeonGenerator : AbstractDungeonGenerator
 
     private void SpawnWalls()
     {
-        spawnedObjects.Clear();
-
         int xCells = gridCellIds.GetLength(0);
         int zCells = gridCellIds.GetLength(1);
 
@@ -463,6 +547,8 @@ public class RoomFirstGridDungeonGenerator : AbstractDungeonGenerator
                     case westWallId:
                         spawnedObject = Instantiate(prefab, Grid.ToWorldPosition(x, z, cellSize), Quaternion.Euler(0, 90, 0), transform);
                         break;
+                    case bedId:
+
                     default:
                         break;
                 }
@@ -471,13 +557,43 @@ public class RoomFirstGridDungeonGenerator : AbstractDungeonGenerator
                 {
                     continue;
                 }
-
-                spawnedObjects.Add(spawnedObject);
             }
         }
     }
 
+    private bool IsWalkable(int x, int z)
+    {
+        int id = gridCellIds[x, z];
+        return id == walkableId || id == corridorWalkableId;
+    }
 
+    private bool InBounds(int x, int z)
+    {
+        return x >= 0 && x < gridCellIds.GetLength(0) && z >= 0 && z < gridCellIds.GetLength(1);
+    }
+
+    private bool IsWall(int x, int z)
+    {
+        var cellId = gridCellIds[x, z];
+
+        return cellId == northWallId ||
+               cellId == eastWallId ||
+               cellId == southWallId ||
+               cellId == westWallId;
+    }
+
+    private bool IsWallCell(int x, int z)
+    {
+        if (!InBounds(x, z)) return true;
+        return IsWall(x, z) || IsCornerId(gridCellIds[x, z]);
+    }
+
+    private struct Placement
+    {
+        public Vector2Int Cell;
+        public Quaternion Rot;
+        public ESpawnLocation Type;
+    }
 
     private bool IsCornerId(int id)
     {
@@ -493,6 +609,66 @@ public class RoomFirstGridDungeonGenerator : AbstractDungeonGenerator
         int existing = gridCellIds[x, z];
         if (IsCornerId(existing)) return;   // keep the corner
         gridCellIds[x, z] = newId;
+    }
+
+    private bool HasFurniture(int x, int z)
+    {
+        int id = gridCellIds[x, z];
+        return id >= 10;
+    }
+
+    private bool CanPlaceFootprint(Vector2Int anchor, Vector2Int size, Quaternion rot)
+    {
+        // if rotated 90 or 270 => swap
+        float y = rot.eulerAngles.y % 180f;
+        bool swapped = Mathf.Abs(y - 90f) < 0.1f;
+
+        int w = swapped ? size.y : size.x;
+        int h = swapped ? size.x : size.y;
+
+        // Anchor convention: top-left, bottom-left, center, etc. Pick one and stay consistent.
+        // Here: anchor is the MIN corner of the footprint (x..x+w-1, z..z+h-1).
+        for (int dz = 0; dz < h; dz++)
+        {
+            for (int dx = 0; dx < w; dx++)
+            {
+                int x = anchor.x + dx;
+                int z = anchor.y + dz;
+                if (!InBounds(x, z))
+                {
+                    return false;
+                }
+
+                if (!IsWalkable(x, z))
+                {
+                    return false;
+                }
+
+                if (HasFurniture(x, z))
+                {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    private void MarkFurniture(Vector2Int anchor, Vector2Int size, Quaternion rot, int furnitureId)
+    {
+        float y = rot.eulerAngles.y % 180f;
+        bool swapped = Mathf.Abs(y - 90f) < 0.1f;
+
+        int w = swapped ? size.y : size.x;
+        int h = swapped ? size.x : size.y;
+
+        for (int dz = 0; dz < h; dz++)
+        {
+            for (int dx = 0; dx < w; dx++)
+            {
+                gridCellIds[anchor.x + dx, anchor.y + dz] = furnitureId;
+            }
+        }
     }
 
     private void OnDrawGizmos()
@@ -535,6 +711,9 @@ public class RoomFirstGridDungeonGenerator : AbstractDungeonGenerator
                     case eastWallId:
                     case westWallId:
                         color = Color.red;
+                        break;
+                    case bedId:
+                        color = Color.green;
                         break;
                     default:
                         color = Color.magenta;

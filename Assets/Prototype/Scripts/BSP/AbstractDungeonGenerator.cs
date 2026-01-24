@@ -6,6 +6,7 @@ public abstract class AbstractDungeonGenerator : MonoBehaviour
 
     [Header("References")]
     [SerializeField] protected DungeonRoom[] roomPrefabs;
+    [SerializeField] protected GameObject bedPrefab;
 
     [SerializeField] protected GameObject cornerPrefab;
     [SerializeField] protected GameObject wallPrefab;

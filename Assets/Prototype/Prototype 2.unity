@@ -163,10 +163,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 771cf7abba13ab34680df186ccfe3554, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  roomPrefabs: []
+  roomPrefabs:
+  - {fileID: 0}
+  bedPrefab: {fileID: 1815131009555423275, guid: 7a906979ebc424c46abe5aca418ef473, type: 3}
   cornerPrefab: {fileID: 857180640733458615, guid: 11382f643398a8047b162d1b187ffc76, type: 3}
   wallPrefab: {fileID: 9131080604107295868, guid: 9e15cc98a70fb4b458bc323ae1b182ff, type: 3}
-  prefab: {fileID: 562052959666557059, guid: 606cbcb76fd86ca4b8e9ac429069a13c, type: 3}
   minXWidth: 10
   minZWidth: 10
   dungeonSizeX: 75
