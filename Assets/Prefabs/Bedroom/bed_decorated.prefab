@@ -96,7 +96,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 64247e594c600d14b83ea9e7e539be8d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  size: {x: 2, y: 1, z: 1}
+  footPrint: {x: 3, y: 3}
+  allowedLocations: 0100000000000000
 --- !u!65 &4384915825246819889
 BoxCollider:
   m_ObjectHideFlags: 0
