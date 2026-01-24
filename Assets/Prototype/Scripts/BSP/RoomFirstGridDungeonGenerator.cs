@@ -1,8 +1,17 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using static UnityEditor.PlayerSettings;
 using Color = UnityEngine.Color;
 
+public enum ESpawnLocation
+{
+    NorthWall,
+    EastWall,
+    SouthWall,
+    WestWall,
+    CenterRoom
+}
 
 public class RoomFirstGridDungeonGenerator : AbstractDungeonGenerator
 {
@@ -115,9 +124,10 @@ public class RoomFirstGridDungeonGenerator : AbstractDungeonGenerator
     {
         foreach (GridRoom room in dungeonRooms)
         {
-            var sections = GetSections(room, 2, 2);
+            GridRoom divisibleRoom = new GridRoom(room.X + 1, room.Z + 1, room.Width - 2, room.Height - 2);
+            var sections = GetSections(divisibleRoom, 2, 2);
 
-            foreach (var section in sections)
+            foreach (GridRoom section in sections)
             {
                 SpawnFurniture(section);
             }
@@ -140,13 +150,149 @@ public class RoomFirstGridDungeonGenerator : AbstractDungeonGenerator
         return sections;
     }
 
-
     private void SpawnFurniture(GridRoom section)
     {
+        // prefab has some script for the sizes
+
+        //int sizeX = 2;
+        //int sizeZ = 1;
+        //ESpawnLocation[] spawnLocations = (ESpawnLocation[])Enum.GetValues(typeof(ESpawnLocation));
+        //int idx = UnityEngine.Random.Range(0, spawnLocations.Length);
+        //ESpawnLocation wallDirection = spawnLocations[idx];
+
+        //for (int z = 0; z < section.Height; z++)
+        //{
+        //    for (int x = 0; x < section.Width; x++)
+        //    {
+        //        if (HasFurniture(x, z))
+        //        {
+        //            continue;
+        //        }
+
+        //        switch (wallDirection)
+        //        {
+        //            case ESpawnLocation.NorthWall:
+        //                if (!IsWall(x, z - 1))
+        //                {
+        //                    continue;
+        //                }
+
+        //                break;
+        //            case ESpawnLocation.EastWall:
+        //                if (!IsWall(x + 1, z))
+        //                {
+        //                    continue;
+        //                }
+
+        //                break;
+        //            case ESpawnLocation.SouthWall:
+        //                if (!IsWall(x, z + 1))
+        //                {
+        //                    continue;
+        //                }
+
+        //                break;
+        //            case ESpawnLocation.WestWall:
+        //                if (!IsWall(x - 1, z))
+        //                {
+        //                    continue;
+        //                }
+
+        //                break;
+        //            case ESpawnLocation.CenterRoom:
+        //                if (!IsWall(x, z - 1) ||
+        //                    !IsWall(x + 1, z) ||
+        //                    !IsWall(x, z + 1) ||
+        //                    !IsWall(x - 1, z))
+        //                {
+        //                    continue;
+        //                }
+
+        //                break;
+        //            default: throw new NotImplementedException(wallDirection.ToString());
+        //        }
+
+        //        bool spawnHorizontally = sizeX <= section.Width;
+        //        bool spawnVertically = sizeZ <= section.Height;
+
+        //        if (!spawnHorizontally || !spawnVertically)
+        //        {
+        //            // not enough space error
+        //            return;
+        //        }
+
+        //        int X = UnityEngine.Random.Range(section.X, section.X + section.Width - sizeX);
+        //        int Z = UnityEngine.Random.Range(section.Z, section.Z + section.Height - sizeZ);
+
+        //        Quaternion rotation = Quaternion.identity;
+        //        if (spawnVertically)
+        //        {
+        //            rotation = Quaternion.Euler(0, 90, 0);
+        //        }
+
+
+        //        //gridCellIds[X, Z] = whateverYouSpawnedId;
+        //        return;
+        //    }
+        //}
+
         Vector3 position = Grid.ToWorldPositionCenter(section.X, section.Z, cellSize);
 
         GameObject gameObject = Instantiate(prefab, position, Quaternion.identity, transform);
         spawnedObjects.Add(gameObject);
+    }
+
+    private bool IsCorner(int x, int z)
+    {
+        int northCellId = gridCellIds[x, z - 1];
+        int eastCellId = gridCellIds[x + 1, z];
+        int southCellId = gridCellIds[x, z + 1];
+        int westCellId = gridCellIds[x - 1, z];
+
+        // is north-east
+        if (northCellId == northWallId &&
+            eastCellId == eastWallId)
+        {
+            return true;
+        }
+        
+        // south-east
+        if (eastCellId == eastWallId &&
+            southCellId == southWallId)
+        {
+            return true;
+        }  
+
+        // south-west
+        if (southCellId == southWallId &&
+            westCellId == westWallId)
+        {
+            return true;
+        }
+
+        // north-west
+        if (westCellId == westWallId &&
+            northCellId == northWallId)
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    private bool IsWall(int x, int z) {
+        var cellId = gridCellIds[x, z];
+
+        return cellId == northWallId ||
+               cellId == eastWallId ||
+               cellId == southWallId ||
+               cellId == westWallId;
+    }
+
+    private bool HasFurniture(int x, int z)
+    {
+        // TODO: Implement this
+        return true;
     }
 
 
@@ -215,7 +361,7 @@ public class RoomFirstGridDungeonGenerator : AbstractDungeonGenerator
 
     private void ConnectHorizontally(GridRoom roomA, GridRoom roomB)
     {
-        bool leftOrRight = Random.value > 0.5f;
+        bool leftOrRight = UnityEngine.Random.value > 0.5f;
 
         int roomAX = roomA.X + roomA.Width - 1;
         int roomAZ = leftOrRight ? roomA.Z + roomA.Height - corridorSideOffset : roomA.Z + corridorSideOffset;
@@ -237,7 +383,7 @@ public class RoomFirstGridDungeonGenerator : AbstractDungeonGenerator
 
     private void ConnectVertically(GridRoom roomA, GridRoom roomB)
     {
-        bool leftOrRight = Random.value > 0.5f;
+        bool leftOrRight = UnityEngine.Random.value > 0.5f;
 
         int roomAX = leftOrRight ? roomA.X + roomA.Width - corridorSideOffset : roomA.X + corridorSideOffset;
         int roomAZ = roomA.Z + roomA.Height - 1;
