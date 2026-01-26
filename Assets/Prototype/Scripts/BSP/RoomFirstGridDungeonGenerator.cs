@@ -241,24 +241,16 @@ public class RoomFirstGridDungeonGenerator : AbstractDungeonGenerator
         int sizeX = 2;
         int sizeZ = 2;
 
-        for (int attempt = 0; attempt < 30; attempt++)
+        if (!IsRectAllId(section.X, section.Z, sizeX, sizeZ, walkableId))
         {
-            int x = UnityEngine.Random.Range(section.X, section.X + section.Width - sizeX + 1);
-            int z = UnityEngine.Random.Range(section.Z, section.Z + section.Height - sizeZ + 1);
-
-            if (!IsRectAllId(x, z, sizeX, sizeZ, walkableId))
-            {
-                return;
-            }
-
-            Vector3 pos = Grid.ToWorldPositionCenter(x, z, cellSize);
-
-            Instantiate(prefab, pos, Quaternion.identity, transform);
-
-            // mark the 4 cells as occupied so nothing overlaps
-            MarkFurnitureCells(x, z, sizeX, sizeZ, furnitureId);
             return;
         }
+
+        Vector3 pos = Grid.ToWorldPositionCenter(section.X, section.Z, cellSize);
+
+        Instantiate(prefab, pos, Quaternion.identity, transform);
+
+        MarkFurnitureCells(section.X, section.Z, sizeX, sizeZ, furnitureId);
     }
 
     private bool IsCorner(int x, int z)
@@ -574,7 +566,6 @@ public class RoomFirstGridDungeonGenerator : AbstractDungeonGenerator
 
                 if (!idToPrefabKVP.TryGetValue(id, out GameObject prefab) && id != 0 && id != 9)
                 {
-                    Debug.LogError($"Prefab doesn't exist for the given ID: {id}");
                     continue;
                 }
 
